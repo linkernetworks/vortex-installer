@@ -2,8 +2,7 @@
 
 - import_tasks: package.yml
 
-# Use kubespray's docker
-#- import_tasks: docker.yml
+- import_tasks: docker.yml
 
 - name: check if nvidia device presents
   shell: lspci | grep NVIDIA

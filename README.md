@@ -21,6 +21,9 @@ make ansible
 
 Must have virtualbox and vagrant on localhost
 
+[virtualbox](https://www.virtualbox.org/wiki/Downloads)
+[vagrant](https://www.vagrantup.com/downloads.html)
+
 ```
 make vagrant-plugin
 make vagrant all
