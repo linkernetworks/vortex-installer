@@ -49,6 +49,7 @@ config-kubespray:
 	cp inventory/inventory.ini kubespray/inventory/vortex/hosts.ini
 
 # preflight check and library install
+.PHONY: preflight
 preflight:
 	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
 		--inventory inventory/preflight/inventory.ini \
