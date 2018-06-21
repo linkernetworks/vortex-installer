@@ -32,7 +32,7 @@ make vagrant-plugin vagrant all
 
 # Bare metal / Cloud servers
 
-**Edit config**
+Edit config
 In `config/config.yml`, setup IPs of master and minion nodes.
 
 Or use template:
@@ -40,8 +40,10 @@ Or use template:
 cp config/taipei.yml config/config.yml
 ```
 
-**Start**
-make prefight kubespray glusterfs
+Start
+```
+make all
+```
 
 # GlusterFS
 
