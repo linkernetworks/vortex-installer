@@ -20,7 +20,7 @@ else ifeq ($(UNAME), Darwin)
 
 ansible: submodule
 	if [[ "$(PORT)" != "" ]]; then sudo port install jq coreutils; fi
-	if [[ "$(BREW)" != "" ]]; then sudo brew install jq coreutils; fi
+	if [[ "$(BREW)" != "" ]]; then brew install jq coreutils; fi
 	rehash
 	sudo pip3 install yq ansible && \
 	sudo pip3 install -r kubespray/requirements.txt
