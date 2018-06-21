@@ -1,0 +1,100 @@
+#!/bin/bash
+
+set -e
+
+# 0.0.4
+version=
+# base.box
+box=base.box
+
+# Vagrant cloud user
+email=
+password=
+username=
+# aurora-base | aurora-base-gpu
+repository=aurora-base
+
+# Release after push
+do_release=0
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -e | --email )           shift
+                                email=$1
+                                ;;
+        -p | --password )       shift
+                                password=$1
+                                ;;
+        -b | --box )            shift
+                                box=$1
+                                ;;
+        -v | --version )        shift
+                                version=$1
+                                ;;
+        -u | --user )           shift
+                                username=$1
+                                ;;
+        -R | --repository )     shift
+                                repository=$1
+                                ;;
+        -r | --release )        do_release=1
+                                ;;
+        -h | --help )           usage
+                                exit
+                                ;;
+        * )                     usage
+                                exit 1
+    esac
+    shift
+done
+
+# Get token
+echo "Generating new token..."
+token=$(curl \
+  --header "Content-Type: application/json" \
+  https://app.vagrantup.com/api/v1/authenticate \
+  --data '
+    {
+      "user": {
+        "login": "info@linkernetworks.com",
+        "password": "baoyun5820"
+      }
+    }
+    ' | jq -r '.token')
+
+# Create a new version
+echo "Creating new version..."
+curl \
+  --header "Content-Type: application/json" \
+  --header "Authorization: Bearer $token" \
+  https://app.vagrantup.com/api/v1/box/$username/$repository/versions \
+  --data '{ "version": { "version": "'${version}'" } }'
+
+# Create a new provider
+echo "Creating provider..."
+curl \
+  --header "Content-Type: application/json" \
+  --header "Authorization: Bearer $token" \
+  https://app.vagrantup.com/api/v1/box/$username/$repository/version/$version/providers \
+  --data '{ "provider": { "name": "virtualbox" } }'
+
+# Prepare the provider for upload/get an upload URL
+
+upload_path=$(curl \
+  --header "Authorization: Bearer $token" \
+  https://app.vagrantup.com/api/v1/box/$username/$repository/version/$version/provider/virtualbox/upload \
+  | jq -r '.upload_path')
+echo "Upload path: "$upload_path
+
+# Perform the upload
+echo "Uploading..."
+curl $upload_path  --progress-bar --request PUT --upload-file $box
+
+# Release the version
+echo "Releasing..."
+curl \
+  --header "Authorization: Bearer $token" \
+  https://app.vagrantup.com/api/v1/box/$username/$repository/version/$version/release \
+  --request PUT
+
+exit 0
