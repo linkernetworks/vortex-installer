@@ -33,7 +33,7 @@ Vagrant.configure("2") do |config|
 
   # Generate ssh key at .ssh
   unless File.exist?("#{PRIVATE_KEY}")
-    `mkdir -p #{PRIVATE_KEY_PATH} && ssh-keygen -f #{PRIVATE_KEY} -t rsa -N ''`
+    `mkdir -p #{PRIVATE_KEY_PATH} && ssh-keygen -b 2048 -f #{PRIVATE_KEY} -t rsa -q -N ''`
   end
   config.vm.provision "file", source: "#{PRIVATE_KEY}.pub", destination: "id_rsa.pub"
   config.vm.provision "append-public-key", :type => "shell", inline: "cat id_rsa.pub >> ~/.ssh/authorized_keys"
