@@ -6,6 +6,8 @@ submodule:
 
 .PHONY: ansible
 UNAME := $(shell uname)
+PORT := $(shell which port)
+BREW := $(shell which brew)
 ifeq ($(UNAME), Linux)
 
 ansible: submodule
@@ -17,7 +19,9 @@ ansible: submodule
 else ifeq ($(UNAME), Darwin)
 
 ansible: submodule
-	sudo port install jq && \
+	if [[ "$(PORT)" != "" ]]; then sudo port install jq coreutils; fi
+	if [[ "$(BREW)" != "" ]]; then sudo brew install jq coreutils; fi
+	rehash
 	sudo pip3 install yq ansible && \
 	sudo pip3 install -r kubespray/requirements.txt
 

@@ -22,14 +22,15 @@ make ansible
 Must have virtualbox and vagrant on localhost
 
 [virtualbox](https://www.virtualbox.org/wiki/Downloads)
+
 [vagrant](https://www.vagrantup.com/downloads.html)
 
+Install vagrant plugins, bring up vms, run all ansible scritps by
 ```
-make vagrant-plugin
-make vagrant all
+make vagrant-plugin vagrant all
 ```
 
-# Ansible
+# Bare metal / Cloud servers
 
 **Edit config**
 In `config/config.yml`, setup IPs of master and minion nodes.
