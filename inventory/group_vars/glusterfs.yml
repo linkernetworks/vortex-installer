@@ -1,0 +1,85 @@
+---
+
+# GlusterFS
+
+enable_glusterfs: false
+
+glusterfs_version: 3.13
+
+## Kubernetes
+#
+#gcr_json_key: ../keys/acer-gcr-phi-20180129-key.json
+
+# stable
+docker_version: 17.03.2~ce-0~ubuntu-xenial
+nvidia_docker_version: 2.0.3+docker17.03.2-1
+nvidia_container_runtime_version: 2.0.0+docker17.03.2-1
+
+#docker_version: 17.12.1~ce-0~ubuntu
+#nvidia_docker_version: 2.0.3+docker17.12.1-1
+#nvidia_container_runtime_version: 2.0.0+docker17.12.1-1
+
+# enable_gpu: true
+
+# Aurora
+
+enable_aurora: false
+
+#yaml_dir: "{{ aurora_home }}/build/yaml"
+#
+#aurora_kubernetes_dir: ../aurora-kubernetes
+#aurora_yaml_minimized: true
+#
+#image_tag: aiforge-1.1.1.0-bda85a0
+#image_tag_short: aiforge
+
+## Registry
+
+enable_registry: false
+
+registry_config_dir: /etc/docker/registry
+registry_dockerhub_port: 5001
+registry_dockerhub: "{{ hostvars['node-1'].ansible_ssh_host }}:{{ registry_dockerhub_port }}"
+registry_dockerhub_name: dockerhub-registry-mirror
+registry_dockerhub_volume_dir: /data/registry/dockerhub
+
+images: [
+  "linkernetworks/caffe:master",
+  "linkernetworks/caffe:master-gpu",
+  "linkernetworks/mxnet:master",
+  "linkernetworks/mxnet:master-gpu",
+  "linkernetworks/pytorch:master",
+  "linkernetworks/pytorch:master-gpu",
+  "linkernetworks/pytorch-040:master",
+  "linkernetworks/pytorch-040:master-gpu",
+  "linkernetworks/pytorch-031:master",
+  "linkernetworks/pytorch-031:master-gpu",
+  "linkernetworks/tensorflow-13:master",
+  "linkernetworks/tensorflow-13:master-gpu",
+  "linkernetworks/tensorflow-14:master",
+  "linkernetworks/tensorflow-14:master-gpu",
+  "linkernetworks/tensorflow-15:master",
+  "linkernetworks/tensorflow-15:master-gpu",
+  "linkernetworks/tensorflow-16:master",
+  "linkernetworks/tensorflow-16:master-gpu",
+  "linkernetworks/tensorflow-17:master",
+  "linkernetworks/tensorflow-17:master-gpu",
+  "linkernetworks/minimal-notebook:master",
+  "linkernetworks/minimal-notebook:master-gpu",
+  "linkernetworks/chainer:master",
+  "linkernetworks/chainer:master-gpu",
+  "linkernetworks/cntk:master",
+  "linkernetworks/cntk:master-gpu"
+]
+
+app_yamls: [
+  "apps/cv-server/deployment.yaml",
+  "apps/jobserver/deployment.yaml",
+  "apps/jobupdater/deployment.yaml",
+  "apps/nodesync/deployment.yaml",
+  "apps/kudis/deployment.yaml"
+]
+
+# Miscelleous
+
+skip_install: false

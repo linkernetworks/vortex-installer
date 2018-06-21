@@ -1,0 +1,47 @@
+---
+kubernetes:
+  version: 1.9.7
+  cluster:
+    masters:
+    - node:
+        hostname: master
+        ip: 192.168.3.73
+    nodes:
+    - node:
+        hostname: node-1
+        ip: 192.168.3.74
+    - node:
+        hostname: node-2
+        ip: 192.168.3.75
+glusterFS:
+  version: 3.13
+  heketiTopology:
+    clusters:
+    - nodes:
+      - node:
+          zone: 1
+          hostnames:
+            manage:
+            - 192.168.3.73
+            storage:
+            - 192.168.3.73
+        devices:
+        - /dev/sdb
+      - node:
+          zone: 2
+          hostnames:
+            manage:
+            - 192.168.3.74
+            storage:
+            - 192.168.3.74
+        devices:
+        - /dev/sdb
+      - node:
+          zone: 3
+          hostnames:
+            manage:
+            - 192.168.3.75
+            storage:
+            - 192.168.3.75
+        devices:
+        - /dev/sdb

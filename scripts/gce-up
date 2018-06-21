@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+
+#__DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source scripts/gce.sh
+
+declare -a NODE_NAMES=($(cat config/config.yml | yq -r .kubernetes.cluster.masters[].node.hostname) $(cat config/config.yml | yq -r .kubernetes.cluster.nodes[].node.hostname))
+
+declare -a NODES=($(cat config/config.yml | yq -r .kubernetes.cluster.masters[].node.ip) $(cat config/config.yml | yq -r .kubernetes.cluster.nodes[].node.ip))
+
+SSH_KEY_PATH="inventory/keys/id_rsa"
+
+echo ${NODE_NAMES[@]}
+echo ${NODES[@]}
+
+gcloud::engine::up
+
+# FIXME
+#system::package
+#gcloud::engine::install

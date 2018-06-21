@@ -1,0 +1,17 @@
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: Ensure GlusterFS daemon is started and enabled.
+  service: 
+    name: glusterd
+    state: started
+    enabled: yes
+
+- debug:
+    msg: "{{ hostvars['node-1'].ansible_ssh_host }}"
+
+- name: establish gluster peer pool
+  become: yes
+  become_method: sudo
+  command: gluster peer probe "{{ hostvars['node-1'].ansible_ssh_host }}"
+  ignore_errors: yes

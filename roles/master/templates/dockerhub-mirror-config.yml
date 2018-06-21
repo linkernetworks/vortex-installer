@@ -1,0 +1,23 @@
+# This is a registry config for docker mirror cache registry.
+# The file should be at /etc/docker/registry/config.yml in registry container.
+#
+version: 0.1
+log:
+#  level: debug
+  fields:
+    service: registry
+storage:
+  cache:
+    blobdescriptor: inmemory
+  filesystem:
+    rootdirectory: /data/registry
+http:
+  addr: 0.0.0.0:5000
+  secret: secret
+health:
+  storagedriver:
+    enabled: true
+    interval: 10s
+threshold: 3
+proxy:
+  remoteurl: https://registry-1.docker.io

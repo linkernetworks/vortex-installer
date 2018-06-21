@@ -1,0 +1,35 @@
+---
+kubernetes:
+  version: 1.9.7
+  cluster:
+    masters:
+    - node:
+        hostname: vortex-master
+        ip: 10.1.14.14
+    nodes:
+    - node:
+        hostname: vortex-node-1
+        ip: 10.1.14.86
+glusterFS:
+  version: 3.13
+  heketiTopology:
+    clusters:
+    - nodes:
+      - node:
+          zone: 1
+          hostnames:
+            manage:
+            - 10.1.14.14
+            storage:
+            - 10.1.14.14
+        devices:
+        - /dev/sdb
+      - node:
+          zone: 2
+          hostnames:
+            manage:
+            - 10.1.14.86
+            storage:
+            - 10.1.14.86
+        devices:
+        - /dev/sdb

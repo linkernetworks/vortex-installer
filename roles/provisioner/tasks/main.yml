@@ -1,0 +1,12 @@
+- import_tasks: ssh-key.yml
+
+- name: install yq
+  pip:
+    executable: pip3
+    name: yq
+    state: present
+
+- import_tasks: inventory.yml
+
+- name: Generate Heketi topology from config/config.yml
+  shell: cat config/config.yml | yq '.glusterFS.heketiTopology' > roles/heketi/config/topology.json

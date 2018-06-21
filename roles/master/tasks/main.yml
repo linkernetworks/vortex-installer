@@ -1,0 +1,4 @@
+- import_tasks: package.yml
+
+- import_tasks: registry.yml
+  when: "{{ enable_registry }}"

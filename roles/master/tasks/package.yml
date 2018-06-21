@@ -1,0 +1,25 @@
+- name: install package dependencies
+  become: yes
+  become_method: sudo
+  apt: 
+    name: "{{ item }}"
+  with_items:
+    - "python3"
+    - "python-pip"
+    - "ansible"
+
+- name: install netaddr with pip 
+  pip: 
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - netaddr
+    - docker-py
+ 
+- name: configure ansible 
+  lineinfile:
+    path: /etc/ansible/ansible.cfg
+    regexp: '#host_key_checking = False'
+    line: 'host_key_checking = False'
+
+

@@ -1,0 +1,47 @@
+---
+kubernetes:
+  version: 1.10.4
+  cluster:
+    masters:
+    - node:
+        hostname: k8s-master-1
+        ip: 10.140.1.11
+    nodes:
+    - node:
+        hostname: k8s-node-1
+        ip: 10.140.1.12
+    - node:
+        hostname: k8s-node-2
+        ip: 10.140.1.13
+glusterFS:
+  version: 3.13
+  heketiTopology:
+    clusters:
+    - nodes:
+      - node:
+          zone: 1
+          hostnames:
+            manage:
+            - 10.140.1.11
+            storage:
+            - 10.140.1.11
+        devices:
+        - /dev/sdb
+      - node:
+          zone: 2
+          hostnames:
+            manage:
+            - 10.140.1.12
+            storage:
+            - 10.140.1.12
+        devices:
+        - /dev/sdb
+      - node:
+          zone: 3
+          hostnames:
+            manage:
+            - 10.140.1.13
+            storage:
+            - 10.140.1.13
+        devices:
+        - /dev/sdb

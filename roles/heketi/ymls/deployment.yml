@@ -1,0 +1,59 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: heketi
+  labels:
+    glusterfs: heketi-deployment
+    heketi: deployment
+  annotations:
+    description: Defines how to deploy Heketi
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: heketi
+      labels:
+        glusterfs: heketi-pod
+    spec:
+      hostNetwork: true
+      serviceAccountName: heketi-service-account
+      nodeSelector:
+        heketi: master
+      containers:
+      - image: heketi/heketi:5
+        imagePullPolicy: IfNotPresent
+        name: heketi
+        env:
+        - name: HEKETI_FSTAB
+          value: "/etc/fstab"
+        - name: HEKETI_SNAPSHOT_LIMIT
+          value: "14"
+        - name: HEKETI_KUBE_GLUSTER_DAEMONSET
+          value: "y"
+        - name: HEKETI_IGNORE_STALE_OPERATIONS
+          value: "true"
+        ports:
+        - containerPort: 18080
+        volumeMounts:
+        - name: config
+          mountPath: "/etc/heketi"
+        readinessProbe:
+          timeoutSeconds: 3
+          initialDelaySeconds: 3
+          httpGet:
+            path: "/hello"
+            port: 18080
+        livenessProbe:
+          timeoutSeconds: 3
+          initialDelaySeconds: 30
+          httpGet:
+            path: "/hello"
+            port: 18080
+        securityContext:
+          privileged: true
+      volumes:
+      - name: config
+        hostPath:
+          path: "/etc/heketi"
+          type: DirectoryOrCreate

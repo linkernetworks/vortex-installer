@@ -1,7 +1,5 @@
-# Main
-
-clean: 
-	rm -rf *.log **/*.vmdk **/*.retry
+clean:
+	rm -rf *.log *.zip *.retry aurora-installer
 
 submodule:
 	git submodule init && git submodule update
@@ -11,56 +9,81 @@ UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
 
 ansible: submodule
-  sudo apt-get upgrade && apt-get update
-  sudo apt-get install -y python3 python3-pip jq
-  sudo pip3 install yq ansible netaddr
-  sudo pip3 install -r kubespray/requirements.txt
+	sudo apt-get upgrade && apt-get update && \
+	sudo apt-get install -y python3 python3-pip jq && \
+	sudo pip3 install yq ansible netaddr && \
+	sudo pip3 install -r kubespray/requirements.txt
 
 else ifeq ($(UNAME), Darwin)
 
 ansible: submodule
-  sudo port install jq # sudo brew install jq
-  sudo pip3 install yq ansible
-  sudo pip3 install -r kubespray/requirements.txt
+	sudo port install jq && \
+	sudo pip3 install yq ansible && \
+	sudo pip3 install -r kubespray/requirements.txt
 
 endif
 
-deploy-%: submodule
-	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
-		--inventory=inventory/$*/hosts.ini \
-		deploy.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-deploy.log
-
-reset-%: submodule
-	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
-		--inventory=inventory/$*/hosts.ini \
-		-e reset_confirmation=yes \
-		kubespray/reset.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-reset.log
-
-scale-%: submodule
-	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
-		--inventory=inventory/$*/hosts.ini \
-		kubespray/scale.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-scale.log
-
-upgrade-%: submodule
-	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
-		--inventory=inventory/$*/hosts.ini \
-		kubespray/upgrade-cluster.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-upgrade.log
-
-# Vagrant
-
-vagrant-up:
-	vagrant up
+# infrastructure
+vagrant:
+	cp config/vagrant.yml config/config.yml && vagrant up
 
 vagrant-destroy:
 	vagrant destroy -f
 
-vagrant: vagrant-up deploy-vagrant
+vagrant-plugin:
+	vagrant plugin install vagrant-vbguest vagrant-disksize
 
-# GCE
+gce:
+	cp config/gce.yml config/config.yml && ./scrtips/gce-up
 
-gce-up: submodule
+# all: main target workflow
+all: submodule preflight cluster
+
+config-kubespray:
+	mkdir -p kubespray/inventory/vortex 
+	cp -r inventory/group_vars kubespray/inventory/vortex
+	cp inventory/inventory.ini kubespray/inventory/vortex/hosts.ini
+
+# preflight check and library install
+preflight:
 	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
-		--inventory=inventory/gce/hosts.ini \
-		gce-up.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-gce-up.log
+		--inventory inventory/preflight/inventory.ini \
+		preflight.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-preflight.log
 
-gce: gce-up deploy-gce
+# deploy kubernetes with kubespray
+# FIXME make cluster will cause tty pipe line error. Use bash script instead.
+.PHONY: cluster
+cluster: preflight config-kubespray
+	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
+		-e "@inventory/group_vars/glusterfs.yml" \
+		-e "@inventory/group_vars/all.yml" \
+		-e "@inventory/group_vars/k8s-cluster.yml" \
+		--inventory inventory/inventory.ini \
+		cluster.yml
+
+.PHONY: scale
+scale: config-kubespray
+	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
+		--inventory inventory/inventory.ini \
+		kubespray/scale.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-scale.log
+
+# deploy glusterfs with heketi on kubernetes
+.PHONY: glusterfs
+glusterfs: preflight
+	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
+		-e "@inventory/group_vars/glusterfs.yml" \
+		--inventory inventory/inventory.ini \
+		glusterfs.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-glusterfs.log
+
+aurora: preflight
+	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
+		--inventory inventory/inventory.ini \
+		aurora.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-glusterfs.log
+
+# reset kubernetes cluster with kubespray
+.PHONY: reset
+reset: config-kubespray
+	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
+		-e reset_confirmation=yes \
+		--inventory inventory/inventory.ini \
+		kubespray/reset.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-reset.log

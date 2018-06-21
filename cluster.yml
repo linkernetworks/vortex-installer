@@ -1,0 +1,20 @@
+- hosts: local
+  roles:
+    - variables
+
+- hosts: k8s-cluster:children
+  roles:
+    - common
+
+- hosts: kube-master
+  roles:
+    - precheck
+    - master
+
+- import_playbook: kubespray/cluster.yml
+
+- import_playbook: glusterfs.yml
+  when: "{{ enable_glusterfs }}"
+
+- import_playbook: aurora.yml
+  when: "{{ enable_aurora }}"

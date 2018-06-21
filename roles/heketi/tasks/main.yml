@@ -1,0 +1,89 @@
+- name: make sure no old config in hostpath
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "/etc/heketi"
+
+- name: create heketi config directory on master
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "/etc/heketi/ymls"
+
+- name: add label heketi=master for heketi
+  command: kubectl label node "{{ item }}" heketi=master --overwrite
+  with_items: "{{ groups['kube-master'][0] }}"
+
+- name: copy host access ssh-key to host for heketi
+  copy:
+    src: "{{ ansible_ssh_private_key_file }}"
+    dest: /etc/heketi/id_rsa
+    owner: root
+    group: root
+    mode: 0644
+
+- name: copy heketi config to host
+  copy:
+    src: config/heketi.json
+    dest: /etc/heketi/heketi.json
+    owner: root
+    group: root
+    mode: 0644
+
+- name: copy heketi usage ymls to master
+  copy:
+    src: ymls
+    dest: /etc/heketi
+    owner: root
+    group: root
+    mode: 0644
+
+- name: copy load topology script to master
+  copy:
+    src: config/load-topology
+    dest: /etc/heketi/load-topology
+    owner: root
+    group: root
+    mode: 0644
+
+- name: copy heketi topology json to host
+  copy:
+    src: config/topology.json
+    dest: /etc/heketi/topology.json
+    owner: root
+    group: root
+    mode: 0644
+
+- name: apply heketi ymls to kubernetes
+  command: kubectl apply -f "/etc/heketi/ymls/{{ item }}"
+  with_items:
+    - "config-secret.yml"
+    - "serviceaccount.yml"
+    - "service.yml"
+    - "deployment.yml"
+
+- name: Wait for heketi pod running
+  shell: kubectl get po | grep heketi | grep Running
+  register: result
+  until: result.rc == 0
+  retries: 10
+  delay: 10
+
+- name: Create cluster role binding for heketi
+  shell: kubectl create clusterrolebinding gluster-role-binding --clusterrole=cluster-admin --serviceaccount=default:heketi-service-account
+  ignore_errors: true
+
+- name: Get pod name
+  shell: kubectl get po | grep heketi | awk '{print $1}'
+  register: heketi_pod
+
+- debug:
+    var: heketi_pod.stdout
+
+- name: load heketi topology
+  shell: kubectl exec "{{ heketi_pod.stdout }}" sh '/etc/heketi/load-topology'
+
+- name: apply heketi storageclass
+  shell: kubectl apply -f /etc/heketi/ymls/storageclass

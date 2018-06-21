@@ -1,0 +1,28 @@
+- name: make sure no old file in workspace
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "/etc/aurora"
+
+- name: create aurora workspace
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "/etc/aurora/aurora-kubernetes"
+
+- name: sync aurora yamls
+  synchronize:
+    #src: " {{ playbook_dir }}/aurora-kubernetes/apps/cv-server/deployment.yaml"
+    src: "aurora-kubernetes/{{ item }}"
+    dest: "/etc/aurora/aurora-kubernetes"
+  with_items:
+    - "apps"
+    - "services"
+
+- name: apply aurora
+  shell: kubectl apply -f "/etc/aurora/aurora-kubernetes/{{ item }}"
+  with_items:
+    - "apps"
+    - "services"

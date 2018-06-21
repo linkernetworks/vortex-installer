@@ -1,0 +1,7 @@
+- name: replace heketi ip to storageclass yamls
+  replace:
+    path: "{{ playbook_dir }}/roles/heketi/ymls/storageclass/{{ item }}"
+    regexp: ' http://(.*):(\d+)'
+    replace: " http://{{ hostvars['node-1'].ansible_ssh_host }}:18080"
+  with_items:
+    - "slow-many.yml"

@@ -1,0 +1,42 @@
+- name: Make sure the config/config.yml file exists
+  file:
+    path: config/config.yml
+    state: file
+
+# Kubespray inventory
+- name: Make sure old inventory file not exists
+  file:
+    path: inventory/inventory.ini
+    state: absent
+
+- name: Get config/config.yml realpath
+  shell: realpath "{{ playbook_dir }}/config/config.yml" 
+  register: abs_yml_path
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Get inventory.ini realpath
+  shell: realpath "{{ playbook_dir }}/inventory/inventory.ini" 
+  register: abs_inventory_path
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Get config/config.yml realpath
+  shell: grealpath "{{ playbook_dir }}/config/config.yml" 
+  register: abs_yml_path
+  when: ansible_distribution == 'MacOSX'
+
+- name: Get inventory.ini realpath
+  shell: grealpath "{{ playbook_dir }}/inventory/inventory.ini" 
+  register: abs_inventory_path
+  when: ansible_distribution == 'MacOSX'
+
+- debug:
+    msg: "{{ abs_inventory_path }}"
+
+- name: Generate inventory.ini
+  shell: "{{ role_path }}/scripts/generate-inventory"
+
+# Heketi
+- name: Make sure old topology file not exists
+  file:
+    path: roles/heketi/config/topology.json
+    state: absent

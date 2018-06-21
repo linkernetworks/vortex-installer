@@ -1,0 +1,3 @@
+#!/bin/bash
+
+heketi-cli -s http://localhost:18080 topology load --json /etc/heketi/topology.json

@@ -1,0 +1,35 @@
+---
+kubernetes:
+  version: 1.9.7
+  cluster:
+    masters:
+    - node:
+        hostname: master-1
+        ip: 10.1.14.130
+    nodes:
+    - node:
+        hostname: node-1
+        ip: 10.1.14.131
+glusterFS:
+  version: 3.13
+  heketiTopology:
+    clusters:
+    - nodes:
+      - node:
+          zone: 1
+          hostnames:
+            manage:
+            - 10.1.14.130
+            storage:
+            - 10.1.14.130
+        devices:
+        - /dev/sdb
+      - node:
+          zone: 2
+          hostnames:
+            manage:
+            - 10.1.14.131
+            storage:
+            - 10.1.14.131
+        devices:
+        - /dev/sdb

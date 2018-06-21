@@ -1,0 +1,7 @@
+- hosts: glusterfs
+  roles:
+    - glusterfs
+
+- hosts: kube-master[0]
+  roles:
+    - heketi

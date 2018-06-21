@@ -1,0 +1,24 @@
+- name: check ssh connection to linkers
+  ping:
+
+- name: check root privillege
+  remote_user: root
+  ping:
+
+- name: check docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: check language
+  shell: echo $LANG
+  register: lang
+
+- debug: msg="{{lang}}"
+
+  #- name: reconfigure locale setting to en_US.UTF-8
+  #  shell: "locale-gen en_US en_US.UTF-8 && dpkg-reconfigure locales"
+  #  become: yes
+  #  become_method: sudo
+  #  when: lang != 'en_US.UTF-8'

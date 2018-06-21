@@ -1,0 +1,78 @@
+#!/bin/bash
+# Appending hosts to ansible inventory file
+#
+
+__DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# FIXME ugly path
+# ./generate-inventory --yml $(pwd)/config/config.yml --inventory $(pwd)/inventory/inventory.ini
+yml="${__DIR}/../../../config/config.yml"
+inventory="${__DIR}/../../../inventory/inventory.ini"
+
+#while [[ "$1" != "" ]]; do
+#  case "$1" in
+#    --yml) shift; yml="$1"; shift;;
+#    --inventory) shift; inventory="$1"; shift;;
+#    *) break;;
+#  esac
+#done
+
+append(){
+  echo $* >> "${inventory}"
+}
+
+declare -a masters=($(cat ${yml} | yq -r .kubernetes.cluster.masters[].node.hostname))
+declare -a master_ips=($(cat ${yml} | yq -r .kubernetes.cluster.masters[].node.ip))
+for (( i=0; i < ${#masters[@]}; i++ )) do
+  append "${masters[i]} ansible_ssh_host=${master_ips[i]} ip=${master_ips[i]}"
+done
+
+declare -a nodes=($(cat ${yml} | yq -r .kubernetes.cluster.nodes[].node.hostname))
+declare -a node_ips=($(cat ${yml} | yq -r .kubernetes.cluster.nodes[].node.ip))
+for (( i=0; i < ${#nodes[@]}; i++ )) do
+  append "${nodes[i]} ansible_ssh_host=${node_ips[i]} ip=${node_ips[i]}"
+done
+
+append "[local]"
+append "localhost ansible_connection=local"
+append
+
+append "[kube-master]"
+for (( i=0; i < ${#masters[@]}; i++ )) do
+  append "${masters[i]}"
+done
+append
+
+append "[etcd]"
+for (( i=0; i < ${#masters[@]}; i++ )) do
+  append "${masters[i]}"
+done
+append
+
+append "[kube-node]"
+for (( i=0; i < ${#masters[@]}; i++ )) do
+  append "${masters[i]}"
+done
+for (( i=0; i < ${#nodes[@]}; i++ )) do
+  append "${nodes[i]}"
+done
+append
+
+append "[k8s-cluster:children]"
+append "kube-master"
+append "kube-node"
+append
+
+append "[glusterfs]"
+declare -a glusterfs=($(cat ${yml} | yq -r .glusterFS.heketiTopology.clusters[0].nodes[].node.hostnames.manage[]))
+for (( i=0; i < ${#glusterfs[@]}; i++ )) do
+  append "${glusterfs[i]}"
+done
+append
+
+append "[all:vars]"
+append "ansible_port=22"
+append "ansible_connection=ssh"
+append "ansible_user=root"
+append "ansible_pass="
+append "ansible_ssh_private_key_file=inventory/keys/id_rsa"

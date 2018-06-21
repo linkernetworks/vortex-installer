@@ -1,0 +1,30 @@
+**/*.conf
+ansible/inventory/inventory.ini
+ansible/roles/heketi/config/topology.json
+
+# aurora
+aurora-installer/
+aurora_home
+
+*.zip
+*.tar.gz
+
+# virtualbox
+**/*.vmdk
+**/*.log
+
+# vagrant
+**/*.box
+.vagrant/
+
+# ansible
+**/*.retry
+
+# keys
+ssh/
+keys/
+id_rsa
+credentials.csv
+
+# certificates
+certs/

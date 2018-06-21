@@ -1,0 +1,73 @@
+- name: download cuda-8 and cudnn-6 deb
+  get_url:
+    url: https://storage.googleapis.com/deep-learning-lib/{{item}}.deb
+    dest: /root/aurora_home/{{item}}.deb
+  with_items:
+    - cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64
+    - cuda-repo-ubuntu1604-8-0-local-cublas-performance-update_8.0.61-1_amd64
+    - libcudnn6_6.0.21-1%2Bcuda8.0_amd64
+    - libcudnn6-dev_6.0.21-1%2Bcuda8.0_amd64
+
+- name: install cuda-8
+  apt:
+    deb: /root/aurora_home/{{item}}.deb
+  with_items:
+    - cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64
+    - cuda-repo-ubuntu1604-8-0-local-cublas-performance-update_8.0.61-1_amd64
+
+- name: install cuda-8
+  apt:
+    name: cuda-8
+    state: present
+    update_cache: yes
+    
+- name: install cudnn-6
+  apt:
+    deb: /root/aurora_home/{{item}}.deb
+  with_items:
+    - libcudnn6_6.0.21-1%2Bcuda8.0_amd64
+    - libcudnn6-dev_6.0.21-1%2Bcuda8.0_amd64
+
+- name: remove outdated nvidia-docker data
+  become: yes
+  become_method: sudo
+  command: "docker volume ls -q -f driver=nvidia-docker | xargs -r -I{} -n1 docker ps -q -a -f volume={} | xargs -r docker rm -f"
+  ignore_errors: true
+
+- name: remove outdated nvidia-docker
+  become: yes
+  become_method: sudo
+  apt:
+    name: nvidia-docker
+    state: absent
+    purge: yes
+
+- name: add nvidia docker apt-key
+  become: yes
+  become_method: sudo
+  apt_key:
+    url: https://nvidia.github.io/nvidia-docker/gpgkey
+    state: present
+
+- name: add nvidia docker source list
+  become: yes
+  become_method: sudo
+  get_url:
+    url: https://nvidia.github.io/nvidia-docker/ubuntu16.04/amd64/nvidia-docker.list
+    dest: /etc/apt/sources.list.d/nvidia-docker.list
+
+- name: install nvidia docker 2
+  become: yes
+  become_method: sudo
+  apt:
+    name: nvidia-docker2
+    update_cache: yes
+
+- name: reload docker daemon configuration
+  become: yes
+  become_method: sudo
+  command: "pkill -SIGHUP dockerd"
+
+- name: modify docker daemon to use nvidia as default runtime
+  shell: jq '."default-runtime" = "nvidia" | .runtimes.nvidia.path  = "/usr/bin/nvidia-container-runtime" | .runtimes.nvidia.runtimeArgs = []' /etc/docker/daemon.json > /etc/docker/daemon.json_tmp && mv /etc/docker/daemon.json_tmp /etc/docker/daemon.json
+
