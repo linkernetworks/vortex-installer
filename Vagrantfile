@@ -39,7 +39,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "append-public-key", :type => "shell", inline: "cat id_rsa.pub >> ~/.ssh/authorized_keys"
 
   config.vm.provision "shell", privileged: true, inline: <<-SHELL
-    apt-get update && apt-get install -y python
+    apt-get update && apt-get install -y python make
   SHELL
 
   #config.vm.provision "setup-hosts", :type => "shell", :path => "../scripts/vagrant/setup-hosts" do |s|

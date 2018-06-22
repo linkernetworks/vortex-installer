@@ -1,0 +1,7 @@
+#!/bin/bash
+
+vagrant ssh node-1 --command 'git clone https://github.com/linkernetworks/vortex-installer.git'
+
+vagrant scp inventory/keys/id_rsa node-1:vortex-installer/inventory/keys
+
+vagrant ssh node-1 --command 'cd vortex-installer && make all'
