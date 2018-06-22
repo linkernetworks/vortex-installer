@@ -1,52 +1,66 @@
-Ansible
-===
+footer: Che-Chia David Chang @ Linkernetworks 2018
+slidenumbers: true
 
-Deploy aurora-installer with ansible
+# Vortex Installer
 
-# Prerequisites
+### Deploy Vortex with kubespray and ansible
 
-Install packages:
+---
 
-- python
-- pip
-- ansible: executor to run ansible-playbook
-- jq: json processor
-- yq: yaml processor
+# Quick Start
+
+- Deploy a vortex on localhost with Vagrant and virtualbox
+- Not for production. Test purpose only.
+  - [virtualbox](https://www.virtualbox.org/wiki/Downloads)
+  - [vagrant](https://www.vagrantup.com/downloads.html)
+
+```bash
+git clone https://github.com/linkernetworks/vortex-installer.git
+
+cd vortex-installer && ./scripts/deploy-in-vagrant
+```
+
+---
+
+# Step by Step Details
+
+- Install Prerequisites
+- Edit config file
+- Make sure servers are ready (Bare metal / Cloud servers)
+  - Prepare ssh-key to access servers
+- Install
+
+---
+
+# Install Prerequisites
+
+- [Ansible](https://www.ansible.com/): prepare and run installer scripts based on python
+  - python and pip
+  - jq: json processor
+  - yq: yaml processor
 
 ```
 make ansible
 ```
+---
 
-# Quick Start on localhost with Vagrant and virtualbox
+# Edit config file
 
-Must have virtualbox and vagrant on localhost
+Edit `config/config.yml`, setup IPs of master and minion nodes.
 
-[virtualbox](https://www.virtualbox.org/wiki/Downloads)
-
-[vagrant](https://www.vagrantup.com/downloads.html)
-
-Install vagrant plugins, bring up vms, run all ansible scritps:
-
-```bash
-cd vortex-installer
-
-./scripts/deploy-in-vagrant
-```
-
-# Bare metal / Cloud servers
-
-Edit config
-In `config/config.yml`, setup IPs of master and minion nodes.
-
-Or use template:
 ```
 cp config/taipei.yml config/config.yml
 ```
 
-Start
+---
+
+# Start Install
+
 ```
 make all
 ```
+
+---
 
 # GlusterFS
 

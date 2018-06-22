@@ -15,7 +15,8 @@ ansible: submodule
 		sudo apt-get update && \
 		sudo apt-get install -y python3 python3-pip jq
 	export LC_ALL=C && \
-		sudo pip3 install --upgrade yq ansible netaddr cryptography && \
+		sudo pip3 install --upgrade pip && \
+		sudo pip3 install --upgrade yq ansible netaddr && \
 		sudo pip3 install -r kubespray/requirements.txt
 
 else ifeq ($(UNAME), Darwin)
