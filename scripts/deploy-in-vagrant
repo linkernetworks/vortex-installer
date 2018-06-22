@@ -13,7 +13,7 @@ vagrant ssh node-1 --command 'git clone https://github.com/linkernetworks/vortex
 
 vagrant ssh node-1 --command 'mkdir -p vortex-installer/inventory/keys'
 
-cp id_rsa vortex-installer/inventory/keys/id_rsa
-cp id_rsa.pub vortex-installer/inventory/keys/id_rsa.pub
+vagrant ssh node-1 --command 'cp id_rsa vortex-installer/inventory/keys/id_rsa'
+vagrant ssh node-1 --command 'cp id_rsa.pub vortex-installer/inventory/keys/id_rsa.pub'
 
 vagrant ssh node-1 --command 'cd vortex-installer && make ansible all'
