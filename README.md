@@ -25,9 +25,10 @@ Must have virtualbox and vagrant on localhost
 
 [vagrant](https://www.vagrantup.com/downloads.html)
 
-Install vagrant plugins, bring up vms, run all ansible scritps by
-```
-make vagrant-plugin vagrant all
+Install vagrant plugins, bring up vms, run all ansible scritps:
+```bash
+cd vortex-installer
+./scripts/deploy-in-vagrant
 ```
 
 # Bare metal / Cloud servers

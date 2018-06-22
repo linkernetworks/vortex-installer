@@ -1,7 +1,19 @@
 #!/bin/bash
+# Bring up VMs and deploy k8s with vortex-installer and kubespray 
+#
+# Dependencies:
+# - make
+# - virtualbox
+# - vagrant
+
+vagrant plugin install vagrant-vbguest vagrant-disksize
+vagrant up
 
 vagrant ssh node-1 --command 'git clone https://github.com/linkernetworks/vortex-installer.git'
 
-vagrant scp inventory/keys/id_rsa node-1:vortex-installer/inventory/keys
+vagrant ssh node-1 --command 'mkdir -p vortex-installer/inventory/keys'
 
-vagrant ssh node-1 --command 'cd vortex-installer && make all'
+vagrant scp inventory/keys/id_rsa node-1:vortex-installer/inventory/keys/id_rsa
+vagrant scp inventory/keys/id_rsa.pub node-1:vortex-installer/inventory/keys/id_rsa.pub
+
+vagrant ssh node-1 --command 'cd vortex-installer && make ansible all'

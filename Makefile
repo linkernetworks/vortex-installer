@@ -11,10 +11,12 @@ BREW := $(shell which brew)
 ifeq ($(UNAME), Linux)
 
 ansible: submodule
-	sudo apt-get upgrade && apt-get update && \
-	sudo apt-get install -y python3 python3-pip jq && \
-	sudo pip3 install yq ansible netaddr && \
-	sudo pip3 install -r kubespray/requirements.txt
+	sudo apt-get upgrade -y && \
+		sudo apt-get update && \
+		sudo apt-get install -y python3 python3-pip jq
+	export LC_ALL=C && \
+		sudo pip3 install --upgrade yq ansible netaddr cryptography && \
+		sudo pip3 install -r kubespray/requirements.txt
 
 else ifeq ($(UNAME), Darwin)
 
@@ -28,6 +30,7 @@ ansible: submodule
 endif
 
 # infrastructure
+.PHONY: vagrant
 vagrant:
 	cp config/vagrant.yml config/config.yml && vagrant up
 
