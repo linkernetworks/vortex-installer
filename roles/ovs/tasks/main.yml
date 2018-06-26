@@ -1,0 +1,11 @@
+- name: Install OpenvSwitch on ubuntu
+  apt:
+    name: openvswitch-switch
+    state: present
+
+- name: service | Ensuring OVS Service Is Started And Enabled On Boot
+  become: true
+  service:
+    name: "openvswitch-switch"
+    state: "started"
+    enabled: true

@@ -11,10 +11,14 @@
     - precheck
     - master
 
+- hosts: k8s-cluster:children
+  roles:
+    - node
+
 - import_playbook: kubespray/cluster.yml
 
 - import_playbook: glusterfs.yml
-  when: "{{ enable_glusterfs }}"
+  when: enable_glusterfs
 
 - import_playbook: aurora.yml
-  when: "{{ enable_aurora }}"
+  when: enable_aurora

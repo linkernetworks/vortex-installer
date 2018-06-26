@@ -1,0 +1,24 @@
+- name: make sure a docker daemon.json exists
+  copy:
+    src: templates/docker-daemon.json
+    dest: /etc/docker/daemon.json
+    force: no
+
+- name: configure dockerd to use private registry as dockerhub mirror cache
+  command: jq '."registry-mirrors"[0] = "http://{{ registry_dockerhub }}"' /etc/docker/daemon.json
+  register: daemon_json
+
+- debug:
+    var: daemon_json
+ 
+- name: replace docker daemon.json
+  copy:
+    content: "{{ daemon_json.stdout }}"
+    dest: /etc/docker/daemon.json
+    force: yes
+    owner: root
+
+- name: restart docker
+  service:
+    name: docker
+    state: restarted
