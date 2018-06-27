@@ -1,0 +1,22 @@
+---
+
+# Add the kernel module of driver, like UIO
+- name: Add the kernel module of driver
+  modprobe:
+    name: {{ kernal_module }}
+    state: present
+
+# Insert igb_uio when kernal_module is UIO
+- name: Insert igb_uio when kernal_module is UIO
+  command: insmod {{ DPDK_DIR }}/x86_64-native-linuxapp-gcc/kmod/igb_uio.ko
+  when: {{ kernal_module }} == "uio"
+
+# Make uio and igb_uio installations persist across reboots
+- name: Insert igb_uio when kernal_module is UIO
+  command:
+    - ln -sf {{ DPDK_DIR }}/x86_64-native-linuxapp-gcc/kmod/igb_uio.ko /lib/modules/`uname -r`
+    - depmod -a
+    - echo "uio" | sudo tee -a /etc/modules
+    - echo "igb_uio" | sudo tee -a /etc/modules
+  when: {{ kernal_module }} == "uio"
+

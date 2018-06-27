@@ -1,0 +1,67 @@
+---
+
+# apt update
+- name: Update all packages to the latest version
+  apt:
+    upgrade: dist
+  when: ansible_os_family == 'Debian'
+
+# Install DPDK required packages
+- name: Ensure DPDK utilities are installed.
+  apt: "name={{ item }} state=installed"
+  with_items:
+    - vim
+    - git
+    - clang
+    - doxygen
+    - hugepages
+    - build-essential
+    - libnuma-dev
+    - libpcap-dev
+    - inux-headers-`uname -r`
+    - dh-autoreconf
+    - libssl-dev
+    - libcap-ng-dev
+    - openssl
+    - python
+    - python-pip
+    - htop
+  when: ansible_os_family == 'Debian'
+
+# Download DPDK source
+- name: download DPDK source
+  get_url:
+    url: https://fast.dpdk.org/rel/dpdk-{{ dpdk_version }}.tar.xz
+    dest: /tmp
+
+# tar dpdk source and move to /usr/src
+- name: Extract dpdk into /usr/src
+  unarchive:
+    src: /tmp/dpdk-{{ dpdk_version }}.tar.xz
+    dest: /usr/src
+
+# Install DPDK
+- name: Setting environment values
+  command:
+    - echo 'export DPDK_DIR=/usr/src/dpdk-stable-{{ dpdk_version }}' | sudo tee -a /root/.bashrc
+    - echo 'export LD_LIBRARY_PATH=$DPDK_DIR/x86_64-native-linuxapp-gcc/lib' | sudo tee -a /root/.bashrc
+    - echo 'export DPDK_TARGET=x86_64-native-linuxapp-gcc' | sudo tee -a /root/.bashrc
+    - echo 'export DPDK_BUILD=$DPDK_DIR/$DPDK_TARGET' | sudo tee -a /root/.bashrc
+    - export DPDK_DIR=/usr/src/dpdk-stable-{{ dpdk_version }}
+    - export LD_LIBRARY_PATH=$DPDK_DIR/x86_64-native-linuxapp-gcc/lib
+    - export DPDK_TARGET=x86_64-native-linuxapp-gcc
+    - export DPDK_BUILD=$DPDK_DIR/$DPDK_TARGET
+
+# Using arguments to build DPDK
+- name: Make install DPDK
+- make:
+    chdir: /home/ubuntu/cool-project
+    target: install
+    params:
+      T: {{ DPDK_TARGET }}
+      DESTDIR: install
+
+# Export the DPDK shared library location
+- name: Setting environment values
+  command: sed -i 's/CONFIG_RTE_BUILD_SHARED_LIB=n/CONFIG_RTE_BUILD_SHARED_LIB=y/g' {{ DPDK_DIR }}/config/common_base
+

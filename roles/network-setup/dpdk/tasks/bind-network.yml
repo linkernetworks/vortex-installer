@@ -1,0 +1,18 @@
+---
+
+# Bind secondary network adapter
+# ifconfig DPDK interface down
+- name: Make DPDK interface down
+  net_interface:
+    name: {{ dpdk_iface }}
+    description: dpdk-interface
+    enabled: False
+
+# Bind port
+- name: Bind port
+  command: ${DPDK_DIR}/usertools/dpdk-devbind.py --bind=igb_uio {{ dpdk_iface }}
+
+# Check port
+- name: Check port
+  command: ${DPDK_DIR}/usertools/dpdk-devbind.py --status
+

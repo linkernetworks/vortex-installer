@@ -1,0 +1,13 @@
+---
+
+- name: config-hugepages - Configure hugepages
+  include_tasks: config-hugepages.yml
+
+- name: dpdk - Install DPDK
+  include_tasks: dpdk.yml
+
+- name: setting-kmod - Linux Kernel module setting
+  include_tasks: setting-kmod.yml
+
+- name: bind-network - Bind network port
+  include_tasks: bind-network.yml
