@@ -1,0 +1,22 @@
+---
+
+#### Network Setting ####
+
+# OVS type setting,
+# Supported: ovs, dpdk. ("ovs" is for pure ovs, "dpdk" is for dpdk + ovs)
+ovs_type: dpdk
+
+# DPDK version
+dpdk_version: 17.11.2
+
+# Hugepages size
+nr_hugepages: 1024
+
+# Open vSwitch version
+ovs_version: 2.9.2
+
+# Kernel module
+kernal_module: uio
+
+# Name of network interface provisioned for DPDK to bind
+dpdk_iface: enp0s8

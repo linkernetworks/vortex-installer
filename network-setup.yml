@@ -1,0 +1,14 @@
+---
+
+- hosts: network-setup
+  become: yes
+  roles:
+    - { role: network-setup/dpdk, when: ovs_type == 'dpdk', tags: dpdk }
+    - { role: network-setup/ovs, when: ovs_type == 'ovs', tags: ovs }
+    - { role: network-setup/dpdk-ovs, when: ovs_type == 'dpdk', tags: dpdk-ovs }
+
+
+# The inventory.sample is
+# [network-setup:children]
+# X.X.X.X
+# X.X.X.X
