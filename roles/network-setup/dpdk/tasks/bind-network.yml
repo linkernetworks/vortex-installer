@@ -3,16 +3,18 @@
 # Bind secondary network adapter
 # ifconfig DPDK interface down
 - name: Make DPDK interface down
-  net_interface:
-    name: {{ dpdk_iface }}
-    description: dpdk-interface
-    enabled: False
+  command: ifconfig {{ dpdk_iface }} down
+  ignore_errors: True
+  when: ovs_type == 'dpdk'
 
 # Bind port
 - name: Bind port
-  command: ${DPDK_DIR}/usertools/dpdk-devbind.py --bind=igb_uio {{ dpdk_iface }}
+  shell: cd ~/ && {{ DPDK_DIR }}/usertools/dpdk-devbind.py --bind=igb_uio {{ dpdk_iface }}
+  ignore_errors: True
+  when: ovs_type == 'dpdk'
 
 # Check port
 - name: Check port
-  command: ${DPDK_DIR}/usertools/dpdk-devbind.py --status
+  shell: cd ~/ && {{ DPDK_DIR }}/usertools/dpdk-devbind.py --status
+  when: ovs_type == 'dpdk'
 

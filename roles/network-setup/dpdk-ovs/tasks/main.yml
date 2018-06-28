@@ -3,27 +3,33 @@
 # pip install six for compile OVS
 - pip:
     name: six
+  when: ovs_type == 'dpdk'
 
 # Download OVS source
 - name: download Open vSwitch source
   get_url:
     url: http://openvswitch.org/releases/openvswitch-{{ ovs_version }}.tar.gz
     dest: /tmp
+  when: ovs_type == 'dpdk'
 
 # tar dpdk source and move to /usr/src
 - name: Extract ovs into /usr/src
   unarchive:
-    src: /tmp/openvswitch-{{ ovs_version }}.tar.xz
+    src: /tmp/openvswitch-{{ ovs_version }}.tar.gz
     dest: /usr/src
+  when: ovs_type == 'dpdk'
 
 - name: Boot openvswitch
-  command: cd /usr/src/openvswitch-{{ ovs_version }} && ./boot.sh
+  shell: cd /usr/src/openvswitch-{{ ovs_version }} && ./boot.sh
+  when: ovs_type == 'dpdk'
 
 - name: Config openvswitch
-  command: cd /usr/src/openvswitch-{{ ovs_version }} && CFLAGS='-march=native' ./configure --with-dpdk={{ DPDK_BUILD }}
+  shell: cd /usr/src/openvswitch-{{ ovs_version }} && CFLAGS='-march=native' ./configure --with-dpdk={{ DPDK_BUILD }}
+  when: ovs_type == 'dpdk'
 
 - name: make install openvswitch
-  command: cd /usr/src/openvswitch-{{ ovs_version }} && make && sudo make install
+  shell: cd /usr/src/openvswitch-{{ ovs_version }} && make && sudo make install
+  when: ovs_type == 'dpdk'
 
 # create directories for openvswitch if it doesn't exist
 - name: Create /usr/local/etc/openvswitch dir
@@ -31,39 +37,50 @@
     path: /usr/local/etc/openvswitch
     state: directory
     mode: 0755
+  when: ovs_type == 'dpdk'
 
 - name: Create /usr/local/var/run/openvswitch dir
   file:
     path: /usr/local/var/run/openvswitch
     state: directory
     mode: 0755
+  when: ovs_type == 'dpdk'
 
 - name: Create /usr/local/var/log/openvswitch dir
   file:
     path: /usr/local/var/log/openvswitch
     state: directory
     mode: 0755
+  when: ovs_type == 'dpdk'
 
 - name: Create openvswitch database
   command: ovsdb-tool create /usr/local/etc/openvswitch/conf.db /usr/src/openvswitch-{{ ovs_version }}/vswitchd/vswitch.ovsschema
+  ignore_errors: True
+  when: ovs_type == 'dpdk'
 
 - name: Create openvswitch database
   command: echo 'export PATH=$PATH:/usr/local/share/openvswitch/scripts' | sudo tee -a /root/.bashrc
+  when: ovs_type == 'dpdk'
 
 - name: Copy ovsdb-server file
   template: src="ovsdb-server.service" dest=/etc/systemd/system/ovsdb-server.service
+  when: ovs_type == 'dpdk'
 
 - name: Copy ovs-vswitchd file
   template: src="ovs-vswitchd.service" dest=/etc/systemd/system/ovs-vswitchd.service
+  when: ovs_type == 'dpdk'
 
-- name: enable ovsdb-server
-  systemd:
-    name: ovsdb-server
-    state: started
-    enabled: True
+- name: Enable ovsdb-server
+  command: "{{ item }}"
+  with_items:
+    - systemctl enable ovsdb-server
+    - systemctl start ovsdb-server
+  when: ovs_type == 'dpdk'
 
 - name: enable ovs-vswitchd
-  systemd:
-    name: ovs-vswitchd
-    state: started
-    enabled: True
+  command: "{{ item }}"
+  with_items:
+    - systemctl enable ovs-vswitchd
+    - systemctl start ovs-vswitchd
+  when: ovs_type == 'dpdk'
+

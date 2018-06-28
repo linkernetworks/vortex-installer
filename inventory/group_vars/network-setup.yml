@@ -16,7 +16,7 @@ nr_hugepages: 1024
 ovs_version: 2.9.2
 
 # Kernel module
-kernal_module: uio
+kernel_module: uio
 
 # Name of network interface provisioned for DPDK to bind
 dpdk_iface: enp0s8
