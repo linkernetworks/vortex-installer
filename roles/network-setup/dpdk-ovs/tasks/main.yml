@@ -1,0 +1,69 @@
+---
+
+# pip install six for compile OVS
+- pip:
+    name: six
+
+# Download OVS source
+- name: download Open vSwitch source
+  get_url:
+    url: http://openvswitch.org/releases/openvswitch-{{ ovs_version }}.tar.gz
+    dest: /tmp
+
+# tar dpdk source and move to /usr/src
+- name: Extract ovs into /usr/src
+  unarchive:
+    src: /tmp/openvswitch-{{ ovs_version }}.tar.xz
+    dest: /usr/src
+
+- name: Boot openvswitch
+  command: cd /usr/src/openvswitch-{{ ovs_version }} && ./boot.sh
+
+- name: Config openvswitch
+  command: cd /usr/src/openvswitch-{{ ovs_version }} && CFLAGS='-march=native' ./configure --with-dpdk={{ DPDK_BUILD }}
+
+- name: make install openvswitch
+  command: cd /usr/src/openvswitch-{{ ovs_version }} && make && sudo make install
+
+# create directories for openvswitch if it doesn't exist
+- name: Create /usr/local/etc/openvswitch dir
+  file:
+    path: /usr/local/etc/openvswitch
+    state: directory
+    mode: 0755
+
+- name: Create /usr/local/var/run/openvswitch dir
+  file:
+    path: /usr/local/var/run/openvswitch
+    state: directory
+    mode: 0755
+
+- name: Create /usr/local/var/log/openvswitch dir
+  file:
+    path: /usr/local/var/log/openvswitch
+    state: directory
+    mode: 0755
+
+- name: Create openvswitch database
+  command: ovsdb-tool create /usr/local/etc/openvswitch/conf.db /usr/src/openvswitch-{{ ovs_version }}/vswitchd/vswitch.ovsschema
+
+- name: Create openvswitch database
+  command: echo 'export PATH=$PATH:/usr/local/share/openvswitch/scripts' | sudo tee -a /root/.bashrc
+
+- name: Copy ovsdb-server file
+  template: src="ovsdb-server.service" dest=/etc/systemd/system/ovsdb-server.service
+
+- name: Copy ovs-vswitchd file
+  template: src="ovs-vswitchd.service" dest=/etc/systemd/system/ovs-vswitchd.service
+
+- name: enable ovsdb-server
+  systemd:
+    name: ovsdb-server
+    state: started
+    enabled: True
+
+- name: enable ovs-vswitchd
+  systemd:
+    name: ovs-vswitchd
+    state: started
+    enabled: True
