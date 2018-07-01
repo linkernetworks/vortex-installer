@@ -89,6 +89,12 @@ aurora: preflight
 		--inventory inventory/inventory.ini \
 		aurora.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-aurora.log
 
+network-setup: config-kubespray
+	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
+		-e "@inventory/group_vars/network-setup.yml" \
+		--inventory inventory/inventory.ini \
+		network-setup.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-network-setup.log
+
 # reset kubernetes cluster with kubespray
 .PHONY: reset
 reset: config-kubespray
