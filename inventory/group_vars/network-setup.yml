@@ -18,5 +18,9 @@ ovs_version: 2.9.2
 # Kernel module
 kernel_module: uio
 
-# Name of network interface provisioned for DPDK to bind
+# Name of network interface provisioned for DPDK to bind (eg. enp0s9)
 dpdk_iface: enp0s8
+
+# Set other_config of Open_vSwitch
+cpu_mask: "0x2"
+max_idle: 30000

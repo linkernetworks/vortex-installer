@@ -6,6 +6,7 @@
     - { role: network-setup/dpdk, when: kernel_module == 'uio' or ovs_type == 'dpdk', tags: dpdk }
     - { role: network-setup/ovs, when: ovs_type == 'ovs', tags: ovs }
     - { role: network-setup/dpdk-ovs, when: ovs_type == 'dpdk', tags: dpdk-ovs }
+    - { role: network-setup/setup-dpdk-ovs, when: ovs_type == 'dpdk', tags: dpdk-ovs }
 
 
 # The inventory.sample is
