@@ -17,6 +17,7 @@
   unarchive:
     src: /tmp/openvswitch-{{ ovs_version }}.tar.gz
     dest: /usr/src
+    remote_src: yes
   when: ovs_type == 'dpdk'
 
 - name: Boot openvswitch
