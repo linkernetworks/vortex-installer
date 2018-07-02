@@ -49,6 +49,10 @@
     group: root
     mode: 0644
 
+- name: Make sure no old heketi deployment exist
+  command: kubectl delete deploy heketi
+  ignore_errors: true
+
 - name: apply heketi ymls to kubernetes
   command: kubectl apply -f "/etc/heketi/ymls/{{ item }}"
   with_items:
@@ -86,5 +90,12 @@
 - name: load heketi topology
   shell: kubectl exec "{{ heketi_pod.stdout }}" sh '/etc/heketi/load-topology'
 
+- name: Make sure no old storageclass exist
+  command: kubectl delete storageclass slow-many slow-one
+  ignore_errors: true
+
 - name: apply heketi storageclass
-  shell: kubectl apply -f /etc/heketi/ymls/storageclass
+  command: kubectl apply -f "/etc/heketi/ymls/storageclass/{{ item }}"
+  with_items:
+    - "slow-one.yml"
+    - "slow-many.yml"
