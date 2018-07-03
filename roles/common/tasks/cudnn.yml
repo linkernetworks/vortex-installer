@@ -3,14 +3,14 @@
   become_method: sudo
   get_url: 
     url: "https://storage.googleapis.com/deep-learning-lib/libcudnn6_6.0.21-1%2Bcuda8.0_amd64.deb"
-    dest: "{{ aurora_home }}/libcudnn-6.deb"
+    dest: "libcudnn-6.deb"
 
 - name: download cudnn 6 dev
   become: yes
   become_method: sudo
   get_url: 
     url: "https://storage.googleapis.com/deep-learning-lib/libcudnn6-dev_6.0.21-1%2Bcuda8.0_amd64.deb"
-    dest: "{{ aurora_home }}/libcudnn-6-dev.deb"
+    dest: "libcudnn-6-dev.deb"
 
 - name: install cudnn 6
   become: yes
@@ -18,5 +18,5 @@
   apt: 
     deb: "{{ item }}"
   with_items: 
-    - "{{ aurora_home }}/libcudnn-6.deb"
-    - "{{ aurora_home }}/libcudnn-6-dev.deb"
+    - "libcudnn-6.deb"
+    - "libcudnn-6-dev.deb"

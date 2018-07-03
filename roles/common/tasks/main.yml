@@ -15,11 +15,11 @@
 - debug:
     msg: "{{ has_nvidia }}"
 
-- import_tasks: cuda.yml
-  when: has_nvidia.rc == 0
-
-- import_tasks: cudnn.yml
-  when: has_nvidia.rc == 0
+    #- import_tasks: cuda.yml
+    #  when: has_nvidia.rc == 0
+    #
+    #- import_tasks: cudnn.yml
+    #  when: has_nvidia.rc == 0
 
 - import_tasks: nvidia-docker.yml
   when: has_nvidia.rc == 0

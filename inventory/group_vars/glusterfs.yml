@@ -40,8 +40,6 @@ registry_dockerhub_volume_dir: /data/registry/dockerhub
 
 enable_aurora: false
 
-#yaml_dir: "{{ aurora_home }}/build/yaml"
-#
 #aurora_kubernetes_dir: ../aurora-kubernetes
 #aurora_yaml_minimized: true
 #
