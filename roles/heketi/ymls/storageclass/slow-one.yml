@@ -4,5 +4,10 @@ kind: StorageClass
 metadata:
   name: slow-one
 parameters:
-  type: pd-standard
-provisioner: kubernetes.io/gce-pd
+  restauthenabled: "true"
+  resturl: http://192.168.26.11:18080
+  restuser: admin
+  secretName: heketi-admin-secret
+  secretNamespace: default
+  volumetype: "none"
+provisioner: kubernetes.io/glusterfs

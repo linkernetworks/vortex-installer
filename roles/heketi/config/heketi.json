@@ -1,6 +1,6 @@
 {
 	"_port_comment": "Heketi Server Port Number",
-	"port" : "18080",
+	"port" : "8080",
 
 	"_use_auth": "Enable JWT authorization. Please enable for deployment",
 	"use_auth" : false,

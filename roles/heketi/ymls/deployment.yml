@@ -34,7 +34,7 @@ spec:
         - name: HEKETI_IGNORE_STALE_OPERATIONS
           value: "true"
         ports:
-        - containerPort: 18080
+        - containerPort: 8080
         volumeMounts:
         - name: config
           mountPath: "/etc/heketi"
@@ -43,13 +43,13 @@ spec:
           initialDelaySeconds: 3
           httpGet:
             path: "/hello"
-            port: 18080
+            port: 8080
         livenessProbe:
           timeoutSeconds: 3
           initialDelaySeconds: 30
           httpGet:
             path: "/hello"
-            port: 18080
+            port: 8080
         securityContext:
           privileged: true
       volumes:

@@ -99,3 +99,15 @@
   with_items:
     - "slow-one.yml"
     - "slow-many.yml"
+
+- name: apply glusterfs test pvc 
+  command: kubectl apply -f "/etc/heketi/ymls/pvc/{{ item }}"
+  with_items:
+    - "test-pvc.yml"
+
+- name: Wait for heketi pvc running
+  shell: kubectl get pvc | grep test-pvc | grep BOUND
+  register: pvc_result
+  until: pvc_result.rc == 0
+  retries: 10
+  delay: 10
