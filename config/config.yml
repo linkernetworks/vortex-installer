@@ -26,7 +26,7 @@ glusterFS:
             storage:
             - 192.168.26.11
         devices:
-        - /dev/sdb
+        - /dev/sdc
       - node:
           zone: 2
           hostnames:
@@ -35,7 +35,7 @@ glusterFS:
             storage:
             - 192.168.26.12
         devices:
-        - /dev/sdb
+        - /dev/sdc
       - node:
           zone: 3
           hostnames:
@@ -44,4 +44,4 @@ glusterFS:
             storage:
             - 192.168.26.13
         devices:
-        - /dev/sdb
+        - /dev/sdc

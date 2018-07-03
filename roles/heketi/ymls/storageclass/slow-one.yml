@@ -5,7 +5,7 @@ metadata:
   name: slow-one
 parameters:
   restauthenabled: "true"
-  resturl: http://192.168.26.11:18080
+  resturl: http://192.168.26.11:32393
   restuser: admin
   secretName: heketi-admin-secret
   secretNamespace: default

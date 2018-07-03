@@ -73,7 +73,7 @@
   ignore_errors: true
 
 - name: Get pod name
-  shell: kubectl get po | grep heketi | awk '{print $1}'
+  shell: kubectl get po | grep heketi | grep Running | awk '{print $1}'
   register: heketi_pod
 
 - debug:
@@ -111,3 +111,8 @@
   until: pvc_result.rc == 0
   retries: 10
   delay: 10
+
+- name: Clean up test pvc
+  command: kubectl delete -f "/etc/heketi/ymls/pvc/{{ item }}"
+  with_items:
+    - "test-pvc.yml"

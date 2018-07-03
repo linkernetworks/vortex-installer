@@ -16,7 +16,6 @@ spec:
       labels:
         glusterfs: heketi-pod
     spec:
-      hostNetwork: true
       serviceAccountName: heketi-service-account
       nodeSelector:
         heketi: master
