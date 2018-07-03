@@ -56,7 +56,7 @@
 - name: apply heketi ymls to kubernetes
   command: kubectl apply -f "/etc/heketi/ymls/{{ item }}"
   with_items:
-    - "config-secret.yml"
+    - "heketi-admin-secret.yml"
     - "serviceaccount.yml"
     - "service.yml"
     - "deployment.yml"
