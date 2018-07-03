@@ -28,7 +28,7 @@ enable_gpu: true
 
 # Registry
 
-enable_registry: true
+enable_registry: false
 
 registry_config_dir: /etc/docker/registry
 registry_dockerhub_port: 5001
