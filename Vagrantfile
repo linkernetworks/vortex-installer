@@ -66,7 +66,7 @@ Vagrant.configure("2") do |config|
       config.vm.provision "file", source: "#{PRIVATE_KEY}", destination: "id_rsa"
 
       # wipe iso 9660 signature
-      config.vm.provision "dd device", :type => "shell", inline: "dd if=/dev/zero of=/dev/sdb || true"
+      config.vm.provision "dd device", :type => "shell", inline: "dd if=/dev/zero of=/dev/sdc || true"
 
     end #node-i
   end #each node

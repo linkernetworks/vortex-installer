@@ -2,6 +2,6 @@
   replace:
     path: "{{ playbook_dir }}/roles/heketi/ymls/storageclass/{{ item }}"
     regexp: ' http://(.*):(\d+)'
-    replace: " http://{{ hostvars['node-1'].ansible_ssh_host }}:18080"
+    replace: " http://{{ hostvars['node-1'].ansible_ssh_host }}:32363"
   with_items:
     - "slow-many.yml"
