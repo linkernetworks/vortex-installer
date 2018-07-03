@@ -1,0 +1,17 @@
+---
+
+- hosts: network-setup
+  become: yes
+  roles:
+    - { role: network-setup/dpdk, when: kernel_module == 'uio' or ovs_type == 'dpdk', tags: dpdk }
+    - { role: network-setup/ovs, when: ovs_type == 'ovs', tags: ovs }
+    - { role: network-setup/dpdk-ovs, when: ovs_type == 'dpdk', tags: dpdk-ovs }
+    - { role: network-setup/setup-dpdk-ovs, when: ovs_type == 'dpdk', tags: dpdk-ovs }
+
+
+# The inventory.sample is
+# [network-setup]
+# X.X.X.X
+# X.X.X.X
+
+# try: `ansible-playbook -e "@inventory/group_vars/network-setup.yml" --inventory inventory/inventory.ini network-setup.yml -vvvv`

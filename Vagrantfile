@@ -26,11 +26,6 @@ Vagrant.configure("2") do |config|
   config.vm.box_check_update = false
   config.vbguest.auto_update = false
 
-  config.vm.provider "virtualbox" do |vb|
-    vb.memory = 2048  # 1536 at least for kubespray
-    vb.cpus = 2
-  end #vb
-
   # Generate ssh key at .ssh
   unless File.exist?("#{PRIVATE_KEY}")
     `mkdir -p #{PRIVATE_KEY_PATH} && ssh-keygen -b 2048 -f #{PRIVATE_KEY} -t rsa -q -N ''`
@@ -51,7 +46,9 @@ Vagrant.configure("2") do |config|
 
       node.vm.hostname = "node-#{i}"
       node_ip = NODE_IP_NW + "#{10 + i}"
+      dpdk_ip = NODE_IP_NW + "#{15 + i}"
       node.vm.network :private_network, ip: node_ip
+      node.vm.network "private_network", ip: dpdk_ip
 
       # Add disk for gluster client
       node.vm.provider "virtualbox" do |vb|
@@ -59,6 +56,11 @@ Vagrant.configure("2") do |config|
           vb.customize ["createhd", "--filename", "disk-#{i}.vmdk", "--size", DISK_SIZE]
         end
         vb.customize ['storageattach', :id,  '--storagectl', 'SCSI', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', "disk-#{i}.vmdk"]
+        vb.customize ["modifyvm", :id, "--cpus", 2]
+        vb.customize ["modifyvm", :id, "--memory", 4096]
+        vb.customize ['modifyvm', :id, '--nicpromisc2', 'allow-all']
+        vb.customize ["setextradata", :id, "VBoxInternal/CPUM/SSE4.1", "1"]
+        vb.customize ["setextradata", :id, "VBoxInternal/CPUM/SSE4.2", "1"]
       end #vb
 
       # copy ssh key to vms
