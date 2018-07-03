@@ -1,7 +1,7 @@
 - name: download cuda-8 and cudnn-6 deb
   get_url:
-    url: https://storage.googleapis.com/deep-learning-lib/{{item}}.deb
-    dest: {{item}}.deb
+    url: "https://storage.googleapis.com/deep-learning-lib/{{ item }}.deb"
+    dest: "{{ item }}.deb"
   with_items:
     - cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64
     - cuda-repo-ubuntu1604-8-0-local-cublas-performance-update_8.0.61-1_amd64
@@ -10,7 +10,7 @@
 
 - name: install cuda-8
   apt:
-    deb: {{item}}.deb
+    deb: "{{ item }}.deb"
   with_items:
     - cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64
     - cuda-repo-ubuntu1604-8-0-local-cublas-performance-update_8.0.61-1_amd64
@@ -23,7 +23,7 @@
     
 - name: install cudnn-6
   apt:
-    deb: {{item}}.deb
+    deb: "{{ item }}.deb"
   with_items:
     - libcudnn6_6.0.21-1%2Bcuda8.0_amd64
     - libcudnn6-dev_6.0.21-1%2Bcuda8.0_amd64
