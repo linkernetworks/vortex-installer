@@ -56,7 +56,7 @@
 - name: apply heketi ymls to kubernetes
   command: kubectl apply -f "/etc/heketi/ymls/{{ item }}"
   with_items:
-    - "config-secret.yml"
+    - "heketi-admin-secret.yml"
     - "serviceaccount.yml"
     - "service.yml"
     - "deployment.yml"
@@ -73,7 +73,7 @@
   ignore_errors: true
 
 - name: Get pod name
-  shell: kubectl get po | grep heketi | awk '{print $1}'
+  shell: kubectl get po | grep heketi | grep Running | awk '{print $1}'
   register: heketi_pod
 
 - debug:
@@ -99,3 +99,20 @@
   with_items:
     - "slow-one.yml"
     - "slow-many.yml"
+
+- name: apply glusterfs test pvc 
+  command: kubectl apply -f "/etc/heketi/ymls/pvc/{{ item }}"
+  with_items:
+    - "test-pvc.yml"
+
+- name: Wait for heketi pvc running
+  shell: kubectl get pvc | grep test-pvc | grep BOUND
+  register: pvc_result
+  until: pvc_result.rc == 0
+  retries: 10
+  delay: 10
+
+- name: Clean up test pvc
+  command: kubectl delete -f "/etc/heketi/ymls/pvc/{{ item }}"
+  with_items:
+    - "test-pvc.yml"

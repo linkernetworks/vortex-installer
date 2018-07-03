@@ -63,6 +63,8 @@ ssh root@node-1 -i id_rsa
 
 # Install Prerequisites
 
+- make:
+  - sudo apt-get install make
 - [Ansible](https://www.ansible.com/): prepare and run installer scripts based on python
   - python and pip
   - jq: json processor, yq: yaml processor

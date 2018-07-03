@@ -11,6 +11,8 @@ spec:
   selector:
     glusterfs: heketi-pod
   ports:
-  - name: heketi
-    port: 18080
-    targetPort: 18080
+  - nodePort: 32393
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  type: NodePort

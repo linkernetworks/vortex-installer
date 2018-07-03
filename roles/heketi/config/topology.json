@@ -15,7 +15,7 @@
             }
           },
           "devices": [
-            "/dev/sdb"
+            "/dev/sdc"
           ]
         },
         {
@@ -31,7 +31,7 @@
             }
           },
           "devices": [
-            "/dev/sdb"
+            "/dev/sdc"
           ]
         },
         {
@@ -47,7 +47,7 @@
             }
           },
           "devices": [
-            "/dev/sdb"
+            "/dev/sdc"
           ]
         }
       ]
