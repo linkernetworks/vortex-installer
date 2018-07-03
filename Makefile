@@ -62,7 +62,7 @@ preflight:
 # deploy kubernetes with kubespray
 # FIXME make cluster will cause tty pipe line error. Use bash script instead.
 .PHONY: cluster
-cluster: preflight config-kubespray
+cluster: config-kubespray
 	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
 		-e "@inventory/group_vars/glusterfs.yml" \
 		-e "@inventory/group_vars/all.yml" \
@@ -78,7 +78,7 @@ scale: config-kubespray
 
 # deploy glusterfs with heketi on kubernetes
 .PHONY: glusterfs
-glusterfs: preflight
+glusterfs:
 	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
 		-e "@inventory/group_vars/glusterfs.yml" \
 		--inventory inventory/inventory.ini \
