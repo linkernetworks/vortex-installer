@@ -119,6 +119,8 @@ kubernetes:
 - Clone kubespray from github
 - Run preflight checks
 - Run scripts
+  - Kubespray
+  - GlusterFS
 - It takes about 15~30 mins to complete, depends on network speed. Most time downloading kubernetes images.
 
 ```

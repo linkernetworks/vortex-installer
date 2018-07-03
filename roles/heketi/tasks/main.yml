@@ -11,6 +11,7 @@
     state: directory
   with_items:
     - "/etc/heketi/ymls"
+    - "/etc/heketi/config"
 
 - name: add label heketi=master for heketi
   command: kubectl label node "{{ item }}" heketi=master --overwrite
@@ -19,7 +20,7 @@
 - name: copy host access ssh-key to host for heketi
   copy:
     src: "{{ ansible_ssh_private_key_file }}"
-    dest: /etc/heketi/id_rsa
+    dest: /etc/heketi/config/id_rsa
     owner: root
     group: root
     mode: 0644
@@ -27,7 +28,7 @@
 - name: copy heketi config to host
   copy:
     src: config/heketi.json
-    dest: /etc/heketi/heketi.json
+    dest: /etc/heketi/config/heketi.json
     owner: root
     group: root
     mode: 0644
@@ -40,21 +41,17 @@
     group: root
     mode: 0644
 
-- name: copy load topology script to master
+- name: copy heketi topology json to host
   copy:
-    src: config/load-topology
-    dest: /etc/heketi/load-topology
+    src: config/topology.json
+    dest: /etc/heketi/config/topology.json
     owner: root
     group: root
     mode: 0644
 
-- name: copy heketi topology json to host
-  copy:
-    src: config/topology.json
-    dest: /etc/heketi/topology.json
-    owner: root
-    group: root
-    mode: 0644
+- name: Make sure no old heketi deployment exist
+  command: kubectl delete deploy heketi
+  ignore_errors: true
 
 - name: apply heketi ymls to kubernetes
   command: kubectl apply -f "/etc/heketi/ymls/{{ item }}"
@@ -82,8 +79,23 @@
 - debug:
     var: heketi_pod.stdout
 
+- name: copy load topology script to master
+  copy:
+    src: config/load-topology
+    dest: /etc/heketi/config/load-topology
+    owner: root
+    group: root
+    mode: 0644
+
 - name: load heketi topology
   shell: kubectl exec "{{ heketi_pod.stdout }}" sh '/etc/heketi/load-topology'
 
+- name: Make sure no old storageclass exist
+  command: kubectl delete storageclass slow-many slow-one
+  ignore_errors: true
+
 - name: apply heketi storageclass
-  shell: kubectl apply -f /etc/heketi/ymls/storageclass
+  command: kubectl apply -f "/etc/heketi/ymls/storageclass/{{ item }}"
+  with_items:
+    - "slow-one.yml"
+    - "slow-many.yml"

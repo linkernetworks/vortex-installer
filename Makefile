@@ -45,7 +45,7 @@ gce:
 	cp config/gce.yml config/config.yml && ./scrtips/gce-up
 
 # all: main target workflow
-all: submodule preflight cluster
+all: submodule preflight cluster glusterfs
 
 config-kubespray:
 	mkdir -p kubespray/inventory/vortex 
@@ -87,7 +87,7 @@ glusterfs: preflight
 aurora: preflight
 	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
 		--inventory inventory/inventory.ini \
-		aurora.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-glusterfs.log
+		aurora.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-aurora.log
 
 # reset kubernetes cluster with kubespray
 .PHONY: reset
