@@ -11,6 +11,7 @@
     - rm /etc/systemd/system/ovs-vswitchd.service
     - rm /etc/systemd/system/ovsdb-server.service
     - rm /usr/local/etc/openvswitch/conf.db
+  ignore_errors: True
   when: ovs_type == 'dpdk'
 
 - name: Uninstall public OVS
@@ -18,6 +19,7 @@
   with_items:
     - cd /usr/src/openvswitch-{{ ovs_version }} && make uninstall
     - cd ~/ && sudo rm -rf /usr/src/openvswitch-{{ ovs_version }}/
+  ignore_errors: True
   when: ovs_access_mode == 'public'
 
 - name: Uninstall private OVS
@@ -25,6 +27,7 @@
   with_items:
     - cd /usr/src/{{ ovs_folder_name }} && make uninstall
     - cd ~/ && sudo rm -rf /usr/src/{{ ovs_folder_name }}/
+  ignore_errors: True
   when: ovs_access_mode == 'private'
 
 - name: Uninstall public OVS
