@@ -1,3 +1,11 @@
+- name: Download nvidia driver installer
+  get_url: 
+    dest: . 
+    url: https://us.download.nvidia.com/XFree86/Linux-x86_64/375.20/NVIDIA-Linux-x86_64-375.20.run
+
+- name: Run nvidia driver installer
+  command: bash NVIDIA-Linux-x86_64-375.20.run -q -a --ui=none
+
 - name: remove outdated nvidia-docker data
   become: yes
   become_method: sudo
