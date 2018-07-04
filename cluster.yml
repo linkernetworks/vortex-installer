@@ -17,6 +17,10 @@
 
 - import_playbook: kubespray/cluster.yml
 
+- hosts: kube-master
+  roles:
+    - nvidia
+
 - import_playbook: glusterfs.yml
   when: enable_glusterfs
 
