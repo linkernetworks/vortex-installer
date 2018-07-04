@@ -106,7 +106,7 @@
     - "test-pvc.yml"
 
 - name: Wait for heketi pvc running
-  shell: kubectl get pvc | grep test-pvc | grep BOUND
+  shell: kubectl get pvc | grep test-pvc | grep Bound
   register: pvc_result
   until: pvc_result.rc == 0
   retries: 10
