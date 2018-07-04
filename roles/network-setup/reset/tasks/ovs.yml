@@ -1,0 +1,32 @@
+---
+
+- name: Delete all bridge of ovs
+  shell: ovs-vsctl list-br | awk '{system("ovs-vsctl del-br " $1)}'
+
+- name: Stop services of OVS
+  shell: "{{ item }}"
+  with_items:
+    - service ovsdb-server stop
+    - service ovs-vswitchd stop
+    - rm /etc/systemd/system/ovs-vswitchd.service
+    - rm /etc/systemd/system/ovsdb-server.service
+    - rm /usr/local/etc/openvswitch/conf.db
+  when: ovs_type == 'dpdk'
+
+- name: Uninstall public OVS
+  shell: "{{ item }}"
+  with_items:
+    - cd /usr/src/openvswitch-{{ ovs_version }} && make uninstall
+    - cd ~/ && sudo rm -rf /usr/src/openvswitch-{{ ovs_version }}/
+  when: ovs_access_mode == 'public'
+
+- name: Uninstall private OVS
+  shell: "{{ item }}"
+  with_items:
+    - cd /usr/src/{{ ovs_folder_name }} && make uninstall
+    - cd ~/ && sudo rm -rf /usr/src/{{ ovs_folder_name }}/
+  when: ovs_access_mode == 'private'
+
+- name: Uninstall public OVS
+  shell: apt-get remove --auto-remove openvswitch-switch --purge
+  when: ovs_type == 'ovs'
