@@ -49,7 +49,7 @@
 
 # Install DPDK
 - name: Setting environment values
-  command: "{{ item }}"
+  shell: "{{ item }}"
   with_items:
     - echo 'export DPDK_DIR=/usr/src/dpdk-stable-{{ dpdk_version }}' | sudo tee -a /root/.bashrc
     - echo 'export LD_LIBRARY_PATH=$DPDK_DIR/x86_64-native-linuxapp-gcc/lib' | sudo tee -a /root/.bashrc
