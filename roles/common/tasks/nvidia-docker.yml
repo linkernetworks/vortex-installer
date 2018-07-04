@@ -1,10 +1,10 @@
 - name: Download nvidia driver installer
-  get_url: 
-    dest: . 
-    url: https://us.download.nvidia.com/XFree86/Linux-x86_64/375.20/NVIDIA-Linux-x86_64-375.20.run
+  get_url:
+    dest: .
+    url: "http://us.download.nvidia.com/XFree86/Linux-x86_64/390.67/NVIDIA-Linux-x86_64-390.67.run"
 
 - name: Run nvidia driver installer
-  command: bash NVIDIA-Linux-x86_64-375.20.run -q -a --ui=none
+  command: bash NVIDIA-Linux-x86_64-390.67.run -q -a --ui=none
 
 - name: remove outdated nvidia-docker data
   become: yes
@@ -34,18 +34,18 @@
     url: https://nvidia.github.io/nvidia-docker/ubuntu16.04/amd64/nvidia-docker.list
     dest: /etc/apt/sources.list.d/nvidia-docker.list
 
-- name: install nvidia docker 2
-  become: yes
-  become_method: sudo
-  apt:
-    name: nvidia-docker2={{ nvidia_docker_version }}
-    update_cache: yes
-
 - name: install nvidia container runtime
   become: yes
   become_method: sudo
   apt:
     name: nvidia-container-runtime={{ nvidia_container_runtime_version }}
+    update_cache: yes
+
+- name: install nvidia docker 2
+  become: yes
+  become_method: sudo
+  apt:
+    name: nvidia-docker2={{ nvidia_docker_version }}
     update_cache: yes
 
 - name: reload docker daemon configuration
