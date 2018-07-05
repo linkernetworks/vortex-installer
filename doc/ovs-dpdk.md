@@ -11,6 +11,7 @@
         - [Edit `inventory/inventory.ini`](#edit--inventory-inventoryini-)
         - [Edit `inventory/group_vars/network-setup.yml`](#edit--inventory-group-vars-network-setupyml-)
 - [Install](#install)
+- [Uninstall](#uninstall)
 
 ## Before using ansible
 ### 1. Make Sure Servers are Ready
@@ -46,7 +47,7 @@ $ cd vortex-installer
 $ mkdir inventory/keys/ && ssh-keygen -t rsa -b 4096 -C "" -f  inventory/keys/id_rsa -q -N ''
 ```
 
-- Let's send public ssh key fron ansible host to nodes which you want to install
+- Let's send public ssh key from ansible host to nodes which you want to install
     - Please chenge `password` to the password which was set by you
     - Please cheange `root@host_ip` to the root@hostname which was exist and can be accessed. (Please make sure that root can ssh into the host.)
 ```sh
@@ -76,4 +77,9 @@ Like
 ## Install
 ```sh
 $ ansible-playbook -e "@inventory/group_vars/network-setup.yml" --inventory inventory/inventory.ini network-setup.yml
+```
+
+## Uninstall
+```sh
+$ ansible-playbook -e "@inventory/group_vars/network-setup.yml" --inventory inventory/inventory.ini network-setup-reset.yml
 ```

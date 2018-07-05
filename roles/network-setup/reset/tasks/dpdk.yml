@@ -1,0 +1,81 @@
+---
+
+- name: Get dpdk-devbind status
+  shell: cd ~/ && {{ DPDK_DIR }}/usertools/dpdk-devbind.py --status
+  when: ovs_type == 'dpdk'
+
+- name: Get ifnums
+  shell: grep IFnum_{{ item.name }} ~/.bashrc | cut -d'=' -f2
+  register: ifnum
+  args:
+    executable: /bin/bash
+  with_items:
+    - "{{ dpdk_ifaces }}"
+
+- name: Get ifdrvs
+  shell: grep IFDRV_{{ item.name }} ~/.bashrc | cut -d'=' -f2
+  register: ifdrv
+  args:
+    executable: /bin/bash
+  with_items:
+    - "{{ dpdk_ifaces }}"
+
+- debug: msg="item.item={{item.item.name}}, item.stdout={{item.stdout}}"
+  with_items:
+    - "{{ ifnum.results }}"
+
+# Unbind devices from kernel driver
+- name: Unbind igb or vfio modules
+  shell: cd {{ DPDK_DIR }} && sudo ./usertools/dpdk-devbind.py -u {{ item.stdout }}
+  with_items:
+    - "{{ ifnum.results }}"
+
+- name: Bind normal device module
+  shell: cd ~/ && sudo {{ DPDK_DIR }}/usertools/dpdk-devbind.py --bind={{ item.1.stdout }} {{ item.0.stdout }}
+  with_nested:
+    - "{{ ifnum.results }}"
+    - "{{ ifdrv.results }}"
+
+- name: Turn network interfaces up
+  shell: ifconfig {{ item.name }} up
+  with_items:
+    - "{{ dpdk_ifaces }}"
+
+### Remove device kernel modules ###
+# Unbind devices from IGB UIO driver
+- name: Remove IGB UIO module
+  shell: /sbin/rmmod igb_uio
+  ignore_errors: True
+  when: kernel_module == 'uio' and ovs_type == 'dpdk'
+
+# Unbind devices from VFIO driver
+- name: Remove VFIO module
+  shell: "{{ item }}"
+  with_items:
+    - /sbin/rmmod vfio-pci
+    - /sbin/rmmod vfio_iommu_type1
+    - /sbin/rmmod vfio
+  ignore_errors: True
+  when: kernel_module == 'vfio' and ovs_type == 'dpdk'
+
+# Unbind devices from KNI driver
+- name: Remove KNI module
+  shell: /sbin/rmmod rte_kni
+  ignore_errors: True
+  when: kernel_module == 'knio' and ovs_type == 'dpdk'
+
+# Remove hugepage mappings
+- name: Unmount hugepage
+  command: umount /dev/hugepages
+  when: ovs_type == 'dpdk'
+  ignore_errors: True
+
+- name: Remove export variable
+  shell: "{{ item }}"
+  with_items:
+    - sed -i '/DPDK_DIR/d' ~/.bashrc
+    - sed -i '/LD_LIBRARY_PATH/d' ~/.bashrc
+    - sed -i '/DPDK_TARGET/d' ~/.bashrc
+    - sed -i '/DPDK_BUILD/d' ~/.bashrc
+    - sed -i '/IFDRV_/d' ~/.bashrc
+    - sed -i '/IFnum_/d' ~/.bashrc

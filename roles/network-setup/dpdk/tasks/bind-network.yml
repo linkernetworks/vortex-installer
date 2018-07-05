@@ -1,16 +1,45 @@
 ---
 
+# Save network interface driver name
+- name: Get network interface driver name
+  shell: cd ~/ && {{ DPDK_DIR }}/usertools/dpdk-devbind.py --status | grep {{ item.name }} | grep drv | awk '{print $8}' | cut -d'=' -f2 > /tmp/ifdrv_{{ item.name }}
+  with_items:
+    - "{{ dpdk_ifaces }}"
+  when: ovs_type == 'dpdk'
+
+- name: Save network interface driver name to tmp
+  shell: echo "export IFDRV_{{ item.name }}=$(cat /tmp/ifdrv_{{ item.name }})" > /tmp/ifdrv_{{ item.name }}
+  with_items:
+    - "{{ dpdk_ifaces }}"
+  when: ovs_type == 'dpdk'
+
+- name: Save network interface driver name to tmp
+  shell: echo "export IFnum_{{ item.name }}=$(cd ~/ && {{ DPDK_DIR }}/usertools/dpdk-devbind.py --status | grep {{ item.name }} | grep drv | awk '{print $1}')" >> /tmp/ifdrv_{{ item.name }}
+  with_items:
+    - "{{ dpdk_ifaces }}"
+  when: ovs_type == 'dpdk'
+
+- name: Export network interface driver name
+  shell: cat /tmp/ifdrv_{{ item.name }} | sudo tee -a /root/.bashrc
+  with_items:
+    - "{{ dpdk_ifaces }}"
+  when: ovs_type == 'dpdk'
+
 # Bind secondary network adapter
 # ifconfig DPDK interface down
 - name: Make DPDK interface down
-  command: ifconfig {{ dpdk_iface }} down
+  command: ifconfig {{ item.name }} down
   ignore_errors: True
+  with_items:
+    - "{{ dpdk_ifaces }}"
   when: ovs_type == 'dpdk'
 
 # Bind port
 - name: Bind port
-  shell: cd ~/ && {{ DPDK_DIR }}/usertools/dpdk-devbind.py --bind=igb_uio {{ dpdk_iface }}
+  shell: cd ~/ && {{ DPDK_DIR }}/usertools/dpdk-devbind.py --bind=igb_uio {{ item.name }}
   ignore_errors: True
+  with_items:
+    - "{{ dpdk_ifaces }}"
   when: ovs_type == 'dpdk'
 
 # Check port
