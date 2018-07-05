@@ -239,3 +239,7 @@ persistent_volumes_enabled: false
 ## See https://github.com/kubernetes-incubator/kubespray/issues/2141
 ## Set this variable to true to get rid of this issue
 volume_cross_zone_attachment: false
+
+# Enable to schedule pods on the master
+# For `kubectl taint nodes --all node-role.kubernetes.io/master-`
+taint_enabled: true
