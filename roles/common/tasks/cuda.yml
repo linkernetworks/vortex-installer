@@ -1,22 +1,22 @@
-- name: download cuda 8
-  become: yes
-  become_method: sudo
-  get_url: 
-    url: "https://storage.googleapis.com/deep-learning-lib/cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64.deb"
-    dest: "{{ aurora_home }}/cuda-8.deb"
+- name: download cuda-8 and cudnn-6 deb
+  get_url:
+    url: "https://storage.googleapis.com/deep-learning-lib/{{ item }}.deb"
+    dest: "{{ playbook_dir }}"
+  with_items:
+    - cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64
+    - cuda-repo-ubuntu1604-8-0-local-cublas-performance-update_8.0.61-1_amd64
+    - libcudnn6_6.0.21-1%2Bcuda8.0_amd64
+    - libcudnn6-dev_6.0.21-1%2Bcuda8.0_amd64
 
-- name: download cuda 8 cublas
-  become: yes
-  become_method: sudo
-  get_url: 
-    url: "https://storage.googleapis.com/deep-learning-lib/cuda-repo-ubuntu1604-8-0-local-cublas-performance-update_8.0.61-1_amd64.deb"
-    dest: "{{ aurora_home }}/cuda-8-cublas.deb"
+- name: install cuda-8
+  apt:
+    deb: "{{ playbook_dir}}/{{ item }}.deb"
+  with_items:
+    - cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64
+    - cuda-repo-ubuntu1604-8-0-local-cublas-performance-update_8.0.61-1_amd64
 
-- name: install cuda 8
-  become: yes
-  become_method: sudo
-  apt: 
-    deb: "{{ item }}"
-  with_items: 
-    - "{{ aurora_home }}/cuda-8.deb"
-    - "{{ aurora_home }}/cuda-8-cublas.deb" 
+- name: install cuda-8
+  apt:
+    name: cuda-8-0
+    state: present
+    update_cache: yes

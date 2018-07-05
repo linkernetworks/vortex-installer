@@ -1,22 +1,14 @@
-- name: download cudnn 6
-  become: yes
-  become_method: sudo
-  get_url: 
-    url: "https://storage.googleapis.com/deep-learning-lib/libcudnn6_6.0.21-1%2Bcuda8.0_amd64.deb"
-    dest: "{{ aurora_home }}/libcudnn-6.deb"
-
-- name: download cudnn 6 dev
-  become: yes
-  become_method: sudo
-  get_url: 
-    url: "https://storage.googleapis.com/deep-learning-lib/libcudnn6-dev_6.0.21-1%2Bcuda8.0_amd64.deb"
-    dest: "{{ aurora_home }}/libcudnn-6-dev.deb"
-
-- name: install cudnn 6
-  become: yes
-  become_method: sudo
-  apt: 
-    deb: "{{ item }}"
-  with_items: 
-    - "{{ aurora_home }}/libcudnn-6.deb"
-    - "{{ aurora_home }}/libcudnn-6-dev.deb"
+- name: download cuda-8 and cudnn-6 deb
+  get_url:
+    url: "https://storage.googleapis.com/deep-learning-lib/{{ item }}.deb"
+    dest: "{{ playbook_dir }}"
+  with_items:
+    - libcudnn6_6.0.21-1%2Bcuda8.0_amd64
+    - libcudnn6-dev_6.0.21-1%2Bcuda8.0_amd64
+    
+- name: install cudnn-6
+  apt:
+    deb: "{{ playbook_dir}}/{{ item }}.deb"
+  with_items:
+    - libcudnn6_6.0.21-1%2Bcuda8.0_amd64
+    - libcudnn6-dev_6.0.21-1%2Bcuda8.0_amd64

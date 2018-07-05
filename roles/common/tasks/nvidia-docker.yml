@@ -1,32 +1,10 @@
-- name: download cuda-8 and cudnn-6 deb
+- name: Download nvidia driver installer
   get_url:
-    url: https://storage.googleapis.com/deep-learning-lib/{{item}}.deb
-    dest: /root/aurora_home/{{item}}.deb
-  with_items:
-    - cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64
-    - cuda-repo-ubuntu1604-8-0-local-cublas-performance-update_8.0.61-1_amd64
-    - libcudnn6_6.0.21-1%2Bcuda8.0_amd64
-    - libcudnn6-dev_6.0.21-1%2Bcuda8.0_amd64
+    dest: .
+    url: "http://us.download.nvidia.com/XFree86/Linux-x86_64/390.67/NVIDIA-Linux-x86_64-{{ nvidia_driver_version }}.run"
 
-- name: install cuda-8
-  apt:
-    deb: /root/aurora_home/{{item}}.deb
-  with_items:
-    - cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64
-    - cuda-repo-ubuntu1604-8-0-local-cublas-performance-update_8.0.61-1_amd64
-
-- name: install cuda-8
-  apt:
-    name: cuda-8
-    state: present
-    update_cache: yes
-    
-- name: install cudnn-6
-  apt:
-    deb: /root/aurora_home/{{item}}.deb
-  with_items:
-    - libcudnn6_6.0.21-1%2Bcuda8.0_amd64
-    - libcudnn6-dev_6.0.21-1%2Bcuda8.0_amd64
+- name: Run nvidia driver installer
+  command: "bash NVIDIA-Linux-x86_64-{{ nvidia_driver_version }}.run -q -a --ui=none"
 
 - name: remove outdated nvidia-docker data
   become: yes
@@ -56,11 +34,18 @@
     url: https://nvidia.github.io/nvidia-docker/ubuntu16.04/amd64/nvidia-docker.list
     dest: /etc/apt/sources.list.d/nvidia-docker.list
 
+- name: install nvidia container runtime
+  become: yes
+  become_method: sudo
+  apt:
+    name: nvidia-container-runtime={{ nvidia_container_runtime_version }}
+    update_cache: yes
+
 - name: install nvidia docker 2
   become: yes
   become_method: sudo
   apt:
-    name: nvidia-docker2
+    name: nvidia-docker2={{ nvidia_docker_version }}
     update_cache: yes
 
 - name: reload docker daemon configuration

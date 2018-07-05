@@ -14,6 +14,7 @@ glusterfs_version: 3.13
 
 ### stable
 docker_version: 17.03.2~ce-0~ubuntu-xenial
+nvidia_driver_version: 390.67
 nvidia_docker_version: 2.0.3+docker17.03.2-1
 nvidia_container_runtime_version: 2.0.0+docker17.03.2-1
 
@@ -24,11 +25,11 @@ nvidia_container_runtime_version: 2.0.0+docker17.03.2-1
 
 # GPU
 
-# enable_gpu: true
+enable_gpu: true
 
 # Registry
 
-enable_registry: true
+enable_registry: false
 
 registry_config_dir: /etc/docker/registry
 registry_dockerhub_port: 5001
@@ -40,8 +41,6 @@ registry_dockerhub_volume_dir: /data/registry/dockerhub
 
 enable_aurora: false
 
-#yaml_dir: "{{ aurora_home }}/build/yaml"
-#
 #aurora_kubernetes_dir: ../aurora-kubernetes
 #aurora_yaml_minimized: true
 #
