@@ -20,6 +20,7 @@
 - hosts: kube-master
   roles:
     - nvidia
+    - { role: k8s-setting/taint, when: taint_enabled == 'true', tags: taint }
 
 - import_playbook: glusterfs.yml
   when: enable_glusterfs
