@@ -26,7 +26,7 @@
   when: ovs_type == 'dpdk' and ovs_access_mode == 'public'
 
 - name: Config openvswitch
-  shell: cd /usr/src/openvswitch-{{ ovs_version }} && CFLAGS='-march=native' ./configure --with-dpdk={{ DPDK_BUILD }}
+  shell: cd /usr/src/openvswitch-{{ ovs_version }} && CFLAGS='-march=native' ./configure --prefix=/usr --localstatedir=/var --sysconfdir=/etc --with-dpdk={{ DPDK_BUILD }}
   when: ovs_type == 'dpdk' and ovs_access_mode == 'public'
 
 - name: make install openvswitch
