@@ -9,8 +9,11 @@ ovs_type: dpdk
 # DPDK version
 dpdk_version: 17.11.2
 
-# Hugepages size
-nr_hugepages: 1024
+# Default hugepage size setting
+# Supported: 1G, 2M
+default_hugepagesz: 1G
+# Allocate a number of Huge pages
+nr_hugepages: 8
 
 
 ### Open vSwitch install ###
