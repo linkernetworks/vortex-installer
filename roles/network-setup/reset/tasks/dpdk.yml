@@ -79,3 +79,5 @@
     - sed -i '/DPDK_BUILD/d' ~/.bashrc
     - sed -i '/IFDRV_/d' ~/.bashrc
     - sed -i '/IFnum_/d' ~/.bashrc
+    - sed -i '/uio/d' /etc/modules
+    - sed -i '/igb_uio/d' /etc/modules
