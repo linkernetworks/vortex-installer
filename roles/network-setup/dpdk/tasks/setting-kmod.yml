@@ -19,7 +19,7 @@
 
 # Make uio and igb_uio installations persist across reboots
 - name: Insert igb_uio when kernal_module is UIO
-  command: "{{ item }}"
+  shell: "{{ item }}"
   with_items:
     - ln -sf {{ DPDK_DIR }}/x86_64-native-linuxapp-gcc/kmod/igb_uio.ko /lib/modules/{{ kernel_version_output.stdout }}
     - depmod -a
