@@ -3,17 +3,3 @@
 - import_tasks: package.yml
 
 - import_tasks: docker.yml
-
-- name: check if nvidia device presents
-  shell: lspci | grep NVIDIA
-  register: has_nvidia
-  ignore_errors: true
-
-- debug:
-    var: has_nvidia
-
-- debug:
-    msg: "{{ has_nvidia }}"
-
-- import_tasks: nvidia-docker.yml
-  when: has_nvidia.rc == 0
