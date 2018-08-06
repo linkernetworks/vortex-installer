@@ -1,9 +1,5 @@
 ---
 
-# Name of network interface provisioned for DPDK to bind (eg. enp0s9)
-dpdk_ifaces:
-  - {name: "enp0s8"}
-
 # Set other_config of Open_vSwitch
 # other_config:dpdk-init=true or try
 dpdk_init: true

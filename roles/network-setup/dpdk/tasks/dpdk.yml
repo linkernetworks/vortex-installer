@@ -66,4 +66,3 @@
 - name: Setting environment values
   command: sed -i 's/CONFIG_RTE_BUILD_SHARED_LIB=n/CONFIG_RTE_BUILD_SHARED_LIB=y/g' {{ DPDK_DIR }}/config/common_base
   when: ovs_type == 'dpdk'
-
