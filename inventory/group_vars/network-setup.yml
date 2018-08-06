@@ -25,4 +25,4 @@ ovs_tar_path: /tmp/openvswitch-2.9.2.tar.gz
 ovs_folder_name: openvswitch-2.9.2
 
 ### Kernel module ###
-kernel_module: uio
+kernel_module: igb_uio

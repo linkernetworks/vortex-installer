@@ -46,7 +46,7 @@
 - name: Remove IGB UIO module
   shell: /sbin/rmmod igb_uio
   ignore_errors: True
-  when: kernel_module == 'uio' and ovs_type == 'dpdk'
+  when: kernel_module == 'igb_uio' and ovs_type == 'dpdk'
 
 # Unbind devices from VFIO driver
 - name: Remove VFIO module

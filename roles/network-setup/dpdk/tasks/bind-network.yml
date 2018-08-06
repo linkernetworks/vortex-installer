@@ -27,14 +27,33 @@
 
 # Bind secondary network adapter
 # ifconfig DPDK interface down
-- name: Make DPDK interface down
-  command: ifconfig {{ item.name }} down
-  ignore_errors: True
-  with_items:
-    - "{{ dpdk_ifaces }}"
+# NIC setup will binding dpdk port after reboot
+- name: Copy dpdkbind.service file
+  template:
+    src: dpdkbind.service.j2
+    dest: "/etc/systemd/system/dpdkbind.service"
+    owner: root
+    group: root
+    mode: 0755
   when: ovs_type == 'dpdk'
 
-# Bind port
+- name: Copy dpdkbind file
+  template:
+    src: dpdkbind.j2
+    dest: "/etc/default/dpdkbind"
+    owner: root
+    group: root
+    mode: 0755
+  when: ovs_type == 'dpdk'
+
+- name: Enable dpdkbind.service
+  command: "{{ item }}"
+  with_items:
+    - systemctl enable dpdkbind
+    - systemctl start dpdkbind
+  when: ovs_type == 'dpdk'
+
+# Bind port in the first time, if dpdkbind.service not OK. Else, let's ignore.
 - name: Bind port
   shell: cd ~/ && {{ DPDK_DIR }}/usertools/dpdk-devbind.py --bind=igb_uio {{ item.name }}
   ignore_errors: True

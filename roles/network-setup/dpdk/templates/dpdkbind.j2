@@ -1,0 +1,4 @@
+# eg, NET_IF_NAME=enp0s16,enp0s17
+{% for item in dpdk_ifaces %}
+NET_IF_NAME={{ item.name }}
+{%- endfor -%}
