@@ -10,8 +10,11 @@
     - [4. Edit two config files](#4-edit-two-config-files)
         - [Edit `inventory/inventory.ini`](#edit--inventory-inventoryini-)
         - [Edit `inventory/group_vars/network-setup.yml`](#edit--inventory-group-vars-network-setupyml-)
+        - [Edit `inventory/host_vars/*.yml`](#edit-inventoryhost_varsyml)
 - [Install](#install)
 - [Uninstall](#uninstall)
+- [Manually bind DPDK port](#manually-bind-dpdk-port)
+- [Memo](#memo)
 
 ## Before using ansible
 ### 1. Make Sure Servers are Ready
@@ -66,13 +69,18 @@ Like
 
 #### Edit `inventory/group_vars/network-setup.yml`
 - **ovs_type**: `ovs` or `dpdk`
-    - If `ovs`: Install pure ovs without dpdk
-    - If `dpdk`:Install dpdk + ovs
+    - `ovs`: Install pure ovs without dpdk
+    - `dpdk`:Install dpdk + ovs
 - **ovs_access_mode**: `public` or `private`
-    - If `public`: Please set **`ovs_version`**
-    - If `private`: Please set **`ovs_tar_path`** and **`ovs_folder_name`**(Your `ovs_tar_path` is on ansible host, and `ovs_folder_name` is the folder name after extracting)
-- **dpdk_iface**: Need to set the Network interface of nodes.
+    - `public`: Please also set **`ovs_version`**
+    - `private`: Please also set **`ovs_tar_path`** and **`ovs_folder_name`**(Your `ovs_tar_path` is on ansible host, and `ovs_folder_name` is the folder name after extracting)
+- **kernel_module** option: `igb_uio`
 
+### Edit `inventory/host_vars/*.yml`
+- **dpdk_init**: for `other_config:dpdk-init=true or try`
+- **dpdk_socket_mem**: for `other_config:dpdk-socket-mem="1024,1024"`
+- **cpu_mask**: for `other_config:pmd-cpu-mask=0x2`
+- **max_idle**: for `other_config:max-idle=30000`
 
 ## Install
 ```sh
@@ -83,3 +91,14 @@ $ ansible-playbook -e "@inventory/group_vars/network-setup.yml" --inventory inve
 ```sh
 $ ansible-playbook -e "@inventory/group_vars/network-setup.yml" --inventory inventory/inventory.ini network-setup-reset.yml
 ```
+
+## Manually bind DPDK port
+```sh
+$ ./usr/src/dpdkbind.sh enp0s10,enp0s17
+```
+
+## Memo
+- Vagrant version:
+    - ✅  v2.0.1
+    - ❎  v2.1.2
+    - ❎  v1.8.1
