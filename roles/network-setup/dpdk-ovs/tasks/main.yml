@@ -114,3 +114,9 @@
     - systemctl start ovs-vswitchd
   when: ovs_type == 'dpdk'
 
+# Make openvswitch installations persist across reboots
+- name: Add openvswitch into /etc/modules
+  shell: "{{ item }}"
+  with_items:
+    - echo "openvswitch" | sudo tee -a /etc/modules
+  when: ovs_type == 'dpdk'
