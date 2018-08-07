@@ -8,3 +8,13 @@
 
 - name: setting-kmod - Linux Kernel module setting
   include_tasks: setting-kmod.yml
+
+# Bind dpdk port manually via shell script
+- name: Copy dpdkbind.sh file
+  template:
+    src: dpdkbind.sh.j2
+    dest: "/usr/src/dpdkbind.sh"
+    owner: root
+    group: root
+    mode: 0755
+  when: ovs_type == 'dpdk'
