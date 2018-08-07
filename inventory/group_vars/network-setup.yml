@@ -6,8 +6,8 @@
 # Supported: ovs, dpdk. ("ovs" is for pure ovs, "dpdk" is for dpdk + ovs)
 ovs_type: dpdk
 
-# DPDK version
-dpdk_version: 17.11.2
+# DPDK version: eg. 17.11.2
+dpdk_version: 17.05.2
 
 # Hugepages size
 nr_hugepages: 1024
@@ -21,8 +21,9 @@ ovs_access_mode: private
 ovs_version: 2.9.2
 
 # ovs_tar_path: If ovs_access_mode is private, you need to setting ovs_tar_path which is in ansible host. (No '/' in the end line.)
-ovs_tar_path: /tmp/openvswitch-2.9.2.tar.gz
-ovs_folder_name: openvswitch-2.9.2
+# Also, please make sure there is a *.tar.gz in the right path before run ansible-playbook
+ovs_tar_path: /tmp/linker-openvswitch-2.8_20180718.tar.gz
+ovs_folder_name: linker-openvswitch
 
 ### Kernel module ###
 kernel_module: igb_uio
