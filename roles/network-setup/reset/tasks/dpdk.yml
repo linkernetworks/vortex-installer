@@ -46,7 +46,7 @@
 - name: Remove IGB UIO module
   shell: /sbin/rmmod igb_uio
   ignore_errors: True
-  when: kernel_module == 'uio' and ovs_type == 'dpdk'
+  when: kernel_module == 'igb_uio' and ovs_type == 'dpdk'
 
 # Unbind devices from VFIO driver
 - name: Remove VFIO module
@@ -81,3 +81,9 @@
     - sed -i '/IFnum_/d' ~/.bashrc
     - sed -i '/uio/d' /etc/modules
     - sed -i '/igb_uio/d' /etc/modules
+
+- name: Remove services of dpdkbind
+  shell: "{{ item }}"
+  with_items:
+    - rm /etc/systemd/system/dpdkbind.service
+    - rm /etc/default/dpdkbind

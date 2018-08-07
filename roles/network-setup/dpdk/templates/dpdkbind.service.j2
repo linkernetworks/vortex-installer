@@ -1,0 +1,14 @@
+[Unit]
+Description=Binding dpdk port after reboot
+Before=ovs-vswitchd.service
+After=multi-user.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+EnvironmentFile=-/etc/default/dpdkbind
+ExecStart=/bin/bash -c 'echo "$NET_IF_NAME" | tr "," "\n" | awk \'{system("/sbin/ifconfig " $1 " down")}\''
+ExecStart=/bin/bash -c 'echo "$NET_IF_NAME" | tr "," "\n" | awk \'{system("/usr/src/dpdk-stable-{{ dpdk_version }}/usertools/dpdk-devbind.py --bind={{ kernel_module }} " $1 )}\''
