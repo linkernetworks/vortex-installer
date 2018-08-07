@@ -81,3 +81,9 @@
     - sed -i '/IFnum_/d' ~/.bashrc
     - sed -i '/uio/d' /etc/modules
     - sed -i '/igb_uio/d' /etc/modules
+
+- name: Remove services of dpdkbind
+  shell: "{{ item }}"
+  with_items:
+    - rm /etc/systemd/system/dpdkbind.service
+    - rm /etc/default/dpdkbind
