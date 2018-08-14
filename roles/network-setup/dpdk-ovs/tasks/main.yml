@@ -7,84 +7,84 @@
 
 ### Public ###
 # Download OVS source
-- name: download Open vSwitch source
+- name: Public | download Open vSwitch source
   get_url:
     url: http://openvswitch.org/releases/openvswitch-{{ ovs_version }}.tar.gz
     dest: /tmp
   when: ovs_type == 'dpdk' and ovs_access_mode == 'public'
 
 # tar dpdk source and move to /usr/src
-- name: Extract public ovs into /usr/src
+- name: Public | Extract public ovs into /usr/src
   unarchive:
     src: /tmp/openvswitch-{{ ovs_version }}.tar.gz
     dest: /usr/src
     remote_src: yes
   when: ovs_type == 'dpdk' and ovs_access_mode == 'public'
 
-- name: Boot openvswitch
+- name: Public | Boot openvswitch
   shell: cd /usr/src/openvswitch-{{ ovs_version }} && ./boot.sh
   when: ovs_type == 'dpdk' and ovs_access_mode == 'public'
 
-- name: Config openvswitch
+- name: Public | Config openvswitch
   shell: cd /usr/src/openvswitch-{{ ovs_version }} && CFLAGS='-march=native' ./configure --prefix=/usr --localstatedir=/var --sysconfdir=/etc --with-dpdk={{ DPDK_BUILD }}
   when: ovs_type == 'dpdk' and ovs_access_mode == 'public'
 
-- name: make install openvswitch
+- name: Public | make install openvswitch
   shell: cd /usr/src/openvswitch-{{ ovs_version }} && make && sudo make install
   when: ovs_type == 'dpdk' and ovs_access_mode == 'public'
 
 ### Private ###
 # tar dpdk private source on ansible host and move to /usr/src
-- name: Extract private ovs into /usr/src
+- name: Private | Extract private ovs into /usr/src
   unarchive:
     src: "{{ ovs_tar_path }}"
     dest: /usr/src
   when: ovs_type == 'dpdk' and ovs_access_mode == 'private'
 
-- name: Boot openvswitch
+- name: Private | Boot openvswitch
   shell: cd /usr/src/{{ ovs_folder_name }} && ./boot.sh
   when: ovs_type == 'dpdk' and ovs_access_mode == 'private'
 
-- name: Config openvswitch
+- name: Private | Config openvswitch
   shell: cd /usr/src/{{ ovs_folder_name }} && CFLAGS='-march=native' ./configure --prefix=/usr --localstatedir=/var --sysconfdir=/etc --with-dpdk={{ DPDK_BUILD }}
   when: ovs_type == 'dpdk' and ovs_access_mode == 'private'
 
-- name: make install openvswitch
+- name: Private | make install openvswitch
   shell: cd /usr/src/{{ ovs_folder_name }} && make && sudo make install
   when: ovs_type == 'dpdk' and ovs_access_mode == 'private'
 
 # create directories for openvswitch if it doesn't exist
-- name: Create /usr/local/etc/openvswitch dir
+- name: Create /etc/openvswitch dir
   file:
-    path: /usr/local/etc/openvswitch
+    path: /etc/openvswitch
     state: directory
     mode: 0755
   when: ovs_type == 'dpdk'
 
-- name: Create /usr/local/var/run/openvswitch dir
+- name: Create /var/run/openvswitch dir
   file:
-    path: /usr/local/var/run/openvswitch
+    path: /var/run/openvswitch
     state: directory
     mode: 0755
   when: ovs_type == 'dpdk'
 
-- name: Create /usr/local/var/log/openvswitch dir
+- name: Create //var/log/openvswitch dir
   file:
-    path: /usr/local/var/log/openvswitch
+    path: /var/log/openvswitch
     state: directory
     mode: 0755
   when: ovs_type == 'dpdk'
 
 ### Create ovs database
 # Public
-- name: Create openvswitch database
-  command: ovsdb-tool create /usr/local/etc/openvswitch/conf.db /usr/src/openvswitch-{{ ovs_version }}/vswitchd/vswitch.ovsschema
+- name: Public | Create openvswitch database
+  command: ovsdb-tool create /etc/openvswitch/conf.db /usr/src/openvswitch-{{ ovs_version }}/vswitchd/vswitch.ovsschema
   ignore_errors: True
   when: ovs_type == 'dpdk' and ovs_access_mode == 'public'
 
 # Private
-- name: Create openvswitch database
-  command: ovsdb-tool create /usr/local/etc/openvswitch/conf.db /usr/src/{{ ovs_folder_name }}/vswitchd/vswitch.ovsschema
+- name: Private | Create openvswitch database
+  command: ovsdb-tool create /etc/openvswitch/conf.db /usr/src/{{ ovs_folder_name }}/vswitchd/vswitch.ovsschema
   ignore_errors: True
   when: ovs_type == 'dpdk' and ovs_access_mode == 'private'
 

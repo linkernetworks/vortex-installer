@@ -10,7 +10,7 @@
     - service ovs-vswitchd stop
     - rm /etc/systemd/system/ovs-vswitchd.service
     - rm /etc/systemd/system/ovsdb-server.service
-    - rm /usr/local/etc/openvswitch/conf.db
+    - rm /etc/openvswitch/conf.db
   ignore_errors: True
   when: ovs_type == 'dpdk'
 
