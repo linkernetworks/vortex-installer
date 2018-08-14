@@ -1,5 +1,9 @@
 ---
 
+- name: config-hugepages - Configure hugepage size as 1G
+  include_tasks: config-hugepage-size.yml
+  when: default_hugepagesz == '1G'
+
 - name: config-hugepages - Configure hugepages
   include_tasks: config-hugepages.yml
 
