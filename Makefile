@@ -70,6 +70,15 @@ cluster: config-kubespray
 		--inventory inventory/inventory.ini \
 		cluster.yml
 
+.PHONY: cluster
+cluster-dev: config-kubespray
+	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
+		-e "@inventory/group_vars/glusterfs.yml" \
+		-e "@inventory/group_vars/all.yml" \
+		-e "@inventory/group_vars/k8s-cluster.yml" \
+		--inventory inventory/inventory.ini \
+		cluster-dev.yml
+
 .PHONY: scale
 scale: config-kubespray
 	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
