@@ -16,4 +16,12 @@
   apt: 
     name: "{{ item }}"
   with_items:
-    - socat
+    - "socat"
+
+- name: install NFS dependencies
+  become: yes
+  become_method: sudo
+  apt: 
+    name: "{{ item }}"
+  with_items:
+    - "nfs-common"
