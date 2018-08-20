@@ -1,5 +1,5 @@
 clean:
-	rm -rf *.log *.zip *.retry aurora-installer
+	rm -rf *.log *.zip *.retry vortex-installer
 
 submodule:
 	git submodule init && git submodule update
@@ -57,7 +57,7 @@ config-kubespray:
 preflight:
 	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
 		--inventory inventory/preflight/inventory.ini \
-		preflight.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-preflight.log
+		preflight.yml 2>&1 | tee vortex-$(shell date +%F-%H%M%S)-preflight.log
 
 # deploy kubernetes with kubespray
 # FIXME make cluster will cause tty pipe line error. Use bash script instead.
@@ -83,7 +83,7 @@ cluster-dev: config-kubespray
 scale: config-kubespray
 	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
 		--inventory inventory/inventory.ini \
-		kubespray/scale.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-scale.log
+		kubespray/scale.yml 2>&1 | tee vortex-$(shell date +%F-%H%M%S)-scale.log
 
 # deploy glusterfs with heketi on kubernetes
 .PHONY: glusterfs
@@ -91,18 +91,18 @@ glusterfs:
 	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
 		-e "@inventory/group_vars/glusterfs.yml" \
 		--inventory inventory/inventory.ini \
-		glusterfs.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-glusterfs.log
+		glusterfs.yml 2>&1 | tee vortex-$(shell date +%F-%H%M%S)-glusterfs.log
 
 aurora: preflight
 	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
 		--inventory inventory/inventory.ini \
 		aurora.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-aurora.log
 
-network-setup: config-kubespray
+network-setup:
 	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
 		-e "@inventory/group_vars/network-setup.yml" \
 		--inventory inventory/inventory.ini \
-		network-setup.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-network-setup.log
+		network-setup.yml 2>&1 | tee vortex-$(shell date +%F-%H%M%S)-network-setup.log
 
 # reset kubernetes cluster with kubespray
 .PHONY: reset
@@ -110,4 +110,4 @@ reset: config-kubespray
 	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
 		-e reset_confirmation=yes \
 		--inventory inventory/inventory.ini \
-		kubespray/reset.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-reset.log
+		kubespray/reset.yml 2>&1 | tee vortex-$(shell date +%F-%H%M%S)-reset.log
