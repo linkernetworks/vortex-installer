@@ -9,3 +9,19 @@
     - "software-properties-common"
     - "curl"
     - "jq"
+
+- name: install Helm dependencies
+  become: yes
+  become_method: sudo
+  apt: 
+    name: "{{ item }}"
+  with_items:
+    - "socat"
+
+- name: install NFS dependencies
+  become: yes
+  become_method: sudo
+  apt: 
+    name: "{{ item }}"
+  with_items:
+    - "nfs-common"
