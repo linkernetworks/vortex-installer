@@ -5,14 +5,28 @@
   roles:
     - { role: env-setup/cpupower, tags: cpupower }
     - { role: network-setup/dpdk, when: kernel_module == 'igb_uio' or ovs_type == 'dpdk', tags: dpdk }
-    - { role: network-setup/ovs, when: ovs_type == 'ovs', tags: ovs }
     - { role: network-setup/dpdk-ovs, when: ovs_type == 'dpdk', tags: dpdk-ovs }
     - { role: network-setup/setup-dpdk-ovs, when: ovs_type == 'dpdk', tags: dpdk-ovs }
 
+- hosts: local
+  roles:
+    - variables
 
-# The inventory.sample is
-# [network-setup]
-# X.X.X.X
-# X.X.X.X
+- hosts: k8s-cluster:children
+  roles:
+    - common
 
-# try: `ansible-playbook -e "@inventory/group_vars/network-setup.yml" --inventory inventory/inventory.ini network-setup.yml -vvvv`
+- hosts: kube-master
+  roles:
+    - precheck
+    - master
+
+- hosts: k8s-cluster:children
+  roles:
+    - node
+
+- import_playbook: kubespray/cluster.yml
+
+- hosts: kube-master
+  roles:
+    - { role: k8s-setting/taint, when: taint_enabled == 'true', tags: taint }
