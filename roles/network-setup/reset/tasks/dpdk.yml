@@ -4,43 +4,6 @@
   shell: cd ~/ && {{ DPDK_DIR }}/usertools/dpdk-devbind.py --status
   when: ovs_type == 'dpdk'
 
-- name: Get ifnums
-  shell: grep IFnum_{{ item.name }} ~/.bashrc | cut -d'=' -f2
-  register: ifnum
-  args:
-    executable: /bin/bash
-  with_items:
-    - "{{ dpdk_ifaces }}"
-
-- name: Get ifdrvs
-  shell: grep IFDRV_{{ item.name }} ~/.bashrc | cut -d'=' -f2
-  register: ifdrv
-  args:
-    executable: /bin/bash
-  with_items:
-    - "{{ dpdk_ifaces }}"
-
-- debug: msg="item.item={{item.item.name}}, item.stdout={{item.stdout}}"
-  with_items:
-    - "{{ ifnum.results }}"
-
-# Unbind devices from kernel driver
-- name: Unbind igb or vfio modules
-  shell: cd {{ DPDK_DIR }} && sudo ./usertools/dpdk-devbind.py -u {{ item.stdout }}
-  with_items:
-    - "{{ ifnum.results }}"
-
-- name: Bind normal device module
-  shell: cd ~/ && sudo {{ DPDK_DIR }}/usertools/dpdk-devbind.py --bind={{ item.1.stdout }} {{ item.0.stdout }}
-  with_nested:
-    - "{{ ifnum.results }}"
-    - "{{ ifdrv.results }}"
-
-- name: Turn network interfaces up
-  shell: ifconfig {{ item.name }} up
-  with_items:
-    - "{{ dpdk_ifaces }}"
-
 ### Remove device kernel modules ###
 # Unbind devices from IGB UIO driver
 - name: Remove IGB UIO module
