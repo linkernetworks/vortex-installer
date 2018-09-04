@@ -98,6 +98,16 @@ aurora: preflight
 		--inventory inventory/inventory.ini \
 		aurora.yml 2>&1 | tee aurora-$(shell date +%F-%H%M%S)-aurora.log
 
+.PHONY: cluster
+vortex-dev: config-kubespray
+	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
+		-e "@inventory/group_vars/glusterfs.yml" \
+		-e "@inventory/group_vars/all.yml" \
+		-e "@inventory/group_vars/k8s-cluster.yml" \
+		-e "@inventory/group_vars/network-setup.yml" \
+		--inventory inventory/inventory.ini \
+		vortex-dev.yml 2>&1 | tee vortex-$(shell date +%F-%H%M%S)-vortex-dev.log
+
 network-setup:
 	ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
 		-e "@inventory/group_vars/network-setup.yml" \
