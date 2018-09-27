@@ -18,14 +18,14 @@ nr_hugepages: 8
 
 ### Open vSwitch install ###
 # ovs_access_mode: Is ovs tar file can be access? (public or private)
-ovs_access_mode: public
+ovs_access_mode: private
 
 # Open vSwitch version, If ovs_access_mode is public, please set ovs_version.
 ovs_version: 2.9.2
 
 # ovs_tar_path: If ovs_access_mode is private, you need to setting ovs_tar_path which is in ansible host. (No '/' in the end line.)
 # Also, please make sure there is a *.tar.gz in the right path before run ansible-playbook
-ovs_tar_path: /tmp/linker-openvswitch-2.8_20180718.tar.gz
+ovs_tar_path: /tmp/linker-openvswitch-2.9_180911-160930.tar.gz
 ovs_folder_name: linker-openvswitch
 
 ### Kernel module ###
