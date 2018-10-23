@@ -32,6 +32,9 @@
     - htop
   when: ansible_os_family == 'Debian' or ovs_type == 'dpdk'
 
+- name: Mark linux kernel as held back, prevent kernel version from being automatically installed, upgraded or removed.
+  shell: sudo apt-mark hold {{ kernel_version_output.stdout }}
+
 # Download DPDK source
 - name: download DPDK source
   get_url:
