@@ -33,3 +33,6 @@
 - name: Uninstall public OVS
   shell: apt-get remove --auto-remove openvswitch-switch --purge
   when: ovs_type == 'ovs'
+
+- name: Unmark linux kernel as held back, let kernel version can being automatically installed, upgraded or removed.
+  shell: sudo apt-mark unhold {{ kernel_version_output.stdout }}

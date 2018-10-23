@@ -16,6 +16,14 @@
   debug:
     msg: "{{ kernel_result.stdout }}"
 
+- name: Info | Get showhold
+  shell: sudo apt-mark showhold
+  register: show_hold
+
+- name: Info | Print showhold
+  debug:
+    msg: "{{ show_hold.stdout.split('\n') }}"
+
 - name: Info | Get Hugepage info
   shell: cat /proc/meminfo | grep Huge
   register: hp_result
