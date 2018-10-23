@@ -34,5 +34,9 @@
   shell: apt-get remove --auto-remove openvswitch-switch --purge
   when: ovs_type == 'ovs'
 
+- name: Get Kernel version
+  shell: uname -r
+  register: kernel_version_output
+
 - name: Unmark linux kernel as held back, let kernel version can being automatically installed, upgraded or removed.
   shell: sudo apt-mark unhold {{ kernel_version_output.stdout }}
