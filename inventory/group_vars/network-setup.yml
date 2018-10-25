@@ -25,7 +25,7 @@ ovs_version: 2.9.2
 
 # ovs_tar_path: If ovs_access_mode is private, you need to setting ovs_tar_path which is in ansible host. (No '/' in the end line.)
 # Also, please make sure there is a *.tar.gz in the right path before run ansible-playbook
-ovs_tar_path: /tmp/linker-openvswitch-2.9_180911-160930.tar.gz
+ovs_tar_path: /tmp/linker-openvswitch-2.9_180921-111037.tar.gz
 ovs_folder_name: linker-openvswitch
 
 ### Kernel module ###
