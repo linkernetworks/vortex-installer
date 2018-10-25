@@ -1,10 +1,14 @@
 ---
 
-# apt update
+- name: Get installed docker
+  shell: dpkg -l | grep -i docker | awk '{print $2}'
+  register: installed_docker
+
+# apt dist-update when there is no docker package
 - name: Update all packages to the latest version
   apt:
     upgrade: dist
-  when: ansible_os_family == 'Debian' or ovs_type == 'dpdk'
+  when: installed_docker.stdout == "" and ansible_os_family == 'Debian' or ovs_type == 'dpdk'
 
 - name: Get Kernel version
   shell: uname -r
