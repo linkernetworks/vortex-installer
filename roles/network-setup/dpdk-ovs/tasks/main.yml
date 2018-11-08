@@ -26,7 +26,7 @@
   when: ovs_type == 'dpdk' and ovs_access_mode == 'public'
 
 - name: Public | Config openvswitch
-  shell: cd /usr/src/openvswitch-{{ ovs_version }} && CFLAGS='-march=native' ./configure --prefix=/usr --localstatedir=/var --sysconfdir=/etc --with-dpdk={{ DPDK_BUILD }}
+  shell: cd /usr/src/openvswitch-{{ ovs_version }} && CFLAGS='-Ofast -g' ./configure --prefix=/usr --localstatedir=/var --sysconfdir=/etc --with-dpdk={{ DPDK_BUILD }}
   when: ovs_type == 'dpdk' and ovs_access_mode == 'public'
 
 - name: Public | make install openvswitch
@@ -46,7 +46,7 @@
   when: ovs_type == 'dpdk' and ovs_access_mode == 'private'
 
 - name: Private | Config openvswitch
-  shell: cd /usr/src/{{ ovs_folder_name }} && CFLAGS='-march=native' ./configure --prefix=/usr --localstatedir=/var --sysconfdir=/etc --with-dpdk={{ DPDK_BUILD }}
+  shell: cd /usr/src/{{ ovs_folder_name }} && CFLAGS='-Ofast -g' ./configure --prefix=/usr --localstatedir=/var --sysconfdir=/etc --with-dpdk={{ DPDK_BUILD }}
   when: ovs_type == 'dpdk' and ovs_access_mode == 'private'
 
 - name: Private | make install openvswitch
